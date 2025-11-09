@@ -1,23 +1,42 @@
 // src/pages/SignupPage.tsx
 import React, { useState } from 'react'; // Import useState 
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export const SignupPage = () => {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('')
-
+    const [error, setError] = useState(null)
+    const navigate = useNavigate()
     const {token, logout} = useAuth()
-    // 2. Create the form submission handler
-    // We use React.SyntheticEvent to get proper TypeScript typing for the event
-    const handleSubmit = (event: React.SyntheticEvent) => {
-        // A: Prevent the default form browser refresh
-        event.preventDefault();
 
-        // B: Log the current state to the console (for testing)
-        console.log('Form submitted!');
-        console.log({ username, email ,password });
+    const handleSubmit = async (event: React.SyntheticEvent) => {
+        event.preventDefault();
+        setError(null)
+        try {
+            const response = await fetch("http://127.0.0.1:8000/user/", {
+                method: "POST",
+                body: JSON.stringify({
+                    user_name: username,
+                    email: email,
+                    password: password
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
+            if(!response.ok) {
+                const result = await response.json();
+                throw new Error(result.detail || "Sign Up Failed")
+            }
+            console.log("Sign Up sucessfull")
+            navigate("/login");
+        } catch (err : any) {
+            console.error(err);
+            setError(err.message);
+        }
     };
 
     return (
@@ -30,7 +49,7 @@ export const SignupPage = () => {
             </>
 
             :
-            
+
             <form onSubmit={handleSubmit}>
                 <div>
                 <label htmlFor="username">Username:</label>
@@ -61,6 +80,9 @@ export const SignupPage = () => {
                 />
                 </div>
                 <button type="submit">Sign Up</button>
+                <div>
+                    <span>{error}</span>
+                </div>
             </form>
         }
         </div>

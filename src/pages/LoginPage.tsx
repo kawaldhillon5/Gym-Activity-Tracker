@@ -1,6 +1,7 @@
 // src/pages/LoginPage.tsx
 import React, { useState } from 'react'; // Import useState 
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export const LoginPage = () => {
 
@@ -8,7 +9,7 @@ export const LoginPage = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
     const {login, token, logout} = useAuth()
-
+    const navigate = useNavigate()
     const handleSubmit = async (event: React.SyntheticEvent) => {
         event.preventDefault();
         setError(null);
@@ -19,6 +20,7 @@ export const LoginPage = () => {
         } catch (err: any) {
         setError(err.message || 'Login failed');
         }
+        navigate("/")
     };
 
     return (
@@ -33,7 +35,7 @@ export const LoginPage = () => {
             </>
 
             :
-            
+
             <form onSubmit={handleSubmit}>
                 <div>
                 <label htmlFor="username">Username:</label>
