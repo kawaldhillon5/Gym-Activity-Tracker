@@ -1,19 +1,24 @@
 // src/pages/LoginPage.tsx
 import React, { useState } from 'react'; // Import useState 
+import { useAuth } from '../contexts/AuthContext';
 
 export const LoginPage = () => {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    // 2. Create the form submission handler
-    // We use React.SyntheticEvent to get proper TypeScript typing for the event
-    const handleSubmit = (event: React.SyntheticEvent) => {
-        // A: Prevent the default form browser refresh
-        event.preventDefault();
+    const [error, setError] = useState<string | null>(null);
+    const {login} = useAuth()
 
-        // B: Log the current state to the console (for testing)
-        console.log('Form submitted!');
-        console.log({ username ,password });
+    const handleSubmit = async (event: React.SyntheticEvent) => {
+        event.preventDefault();
+        setError(null);
+        try {
+       
+        await login(username, password);
+        
+        } catch (err: any) {
+        setError(err.message || 'Login failed');
+        }
     };
 
     return (
@@ -41,6 +46,11 @@ export const LoginPage = () => {
             />
             </div>
             <button type="submit">Log In</button>
+            <div>
+                {
+                    error && <span>{error}</span>
+                }
+            </div>
         </form>
         </div>
     );
