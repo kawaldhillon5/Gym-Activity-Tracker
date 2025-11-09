@@ -4,15 +4,18 @@ import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import { Navbar } from './components/Navbar';
+import { AuthRequired } from './components/AuthRequired';
 
 function App() {
   return (
     <div>
       < Navbar />
       <Routes>
-        <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        < Route element = {<AuthRequired />}>
+          <Route path="/" element={<HomePage />} />
+        </Route>
       </Routes>
     </div>
   );

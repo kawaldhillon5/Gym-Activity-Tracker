@@ -1,85 +1,137 @@
-// src/contexts/AuthContext.tsx
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// 1. Define the "shape" of our auth data
+// 1. Define a simple type for our User object
+// (This should match your `UserRead` schema in the backend)
+interface User {
+  id: number;
+  user_name: string;
+}
+
+// 2. Define the "shape" of our context data
 interface AuthContextType {
   token: string | null;
+  user: User | null; // <-- NEW: We now store the user object
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
-// 2. Create the context
-// We use 'as AuthContextType' to "lie" to TypeScript,
-// saying we'll definitely provide a value later.
+// 3. Create the context
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
-// 3. Create the Provider (the component that "provides" the data)
+// 4. Create the Provider
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  // 4. State to hold the token
-  // We'll make this smarter later by checking localStorage
-  const [token, setToken] = useState<string | null>(()=> { return localStorage.getItem('accessToken')});
+  // 5. "Hydrate" the token from localStorage on initial load
+  const [token, setToken] = useState<string | null>(() => {
+    return localStorage.getItem('accessToken');
+  });
 
-  // 5. The Login Function
-  // This is where we'll move our fetch logic
+  // 6. NEW: State to hold the user object
+  const [user, setUser] = useState<User | null>(null);
+
+  // 7. NEW: The "re-validation" effect
+  // This runs ONCE on app load. Its job is to use the
+  // token from localStorage to fetch the user's data.
+  useEffect(() => {
+    // We only run this if we have a token but no user data
+    if (token && !user) {
+      fetch('http://127.0.0.1:8000/user/me', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+          // If the token is expired or invalid, the API will send a 401
+          // In that case, we throw an error to be caught below
+          throw new Error('Token is invalid');
+        })
+        .then(data => {
+          // Success! We got the user data back
+          setUser(data);
+        })
+        .catch(() => {
+          // If the fetch failed (e.g., bad token), we log the user out
+          // to clear the bad state.
+          console.error("Auto-login failed, clearing token");
+          logout();
+        });
+    }
+  }, [token]); // This effect re-runs if the token changes
+
+  // 8. The Login Function (now with user fetching!)
   const login = async (username: string, password: string) => {
-    // a. Create FormData
     const formData = new FormData();
     formData.append('username', username);
     formData.append('password', password);
 
     try {
-      // b. Call the API
-      const response = await fetch("http://127.0.0.1:8000/user/login", {
+      // Step 1: Get the token
+      const tokenResponse = await fetch("http://127.0.0.1:8000/user/login", {
         method: "POST",
         body: formData,
       });
 
-      if (!response.ok) {
-        
-        const result = await response.json()
-        // If login fails, throw an error to be caught by the page
-        throw new Error(result.detail);
+      if (!tokenResponse.ok) {
+        const result = await tokenResponse.json();
+        throw new Error(result.detail || 'Login failed');
       }
 
-      // c. Get the token from the response
-      const data: { access_token: string } = await response.json();
+      const tokenData: { access_token: string } = await tokenResponse.json();
+      const newToken = tokenData.access_token;
 
-      // d. SET THE TOKEN! This is the key.
-      setToken(data.access_token);
+      // Step 2: Store the token and set it in state
+      localStorage.setItem('accessToken', newToken);
+      setToken(newToken); // This will trigger the useEffect above, but we can be faster
 
-      // e. Store the token in localStorage
-      // This makes it "persist" even after a page refresh
-      localStorage.setItem('accessToken', data.access_token);
+      // Step 3: Use the new token to get the user data
+      const userResponse = await fetch('http://127.0.0.1:8000/user/me', {
+        headers: {
+          'Authorization': `Bearer ${newToken}`,
+        },
+      });
+
+      if (!userResponse.ok) {
+        throw new Error('Failed to fetch user data after login.');
+      }
+
+      const userData = await userResponse.json();
       
-      console.log('Login successful, token stored!');
+      // Step 4: Set the user in state
+      setUser(userData);
+      console.log('Login successful, token and user stored!');
 
     } catch (err) {
       console.error(err);
-      // Re-throw the error so the login page can display it
-      throw err;
+      // Clear any bad state if login fails
+      setToken(null);
+      setUser(null);
+      localStorage.removeItem('accessToken');
+      throw err; // Re-throw the error for the LoginPage to display
     }
   };
 
-  // 6. The Logout Function
+  // 9. The Logout Function 
   const logout = () => {
     setToken(null);
+    setUser(null); 
     localStorage.removeItem('accessToken');
-    console.log('Logged out, token removed!');
+    console.log('Logged out, token and user removed!');
   };
 
-  // 7. The "value" we provide to all children
+  // 10. The "value" we provide
   const value = {
     token,
+    user, 
     login,
     logout,
   };
 
-  // 8. Return the provider wrapper
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// 9. Create a custom "hook" to easily use the context
-// This is a "senior dev" trick.
+// 11. The custom "hook"
 export const useAuth = () => {
   return useContext(AuthContext);
 };
