@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useEffect, useState } from 'react';
 import type { TileClassNameFunc } from 'react-calendar';
 import Calendar from 'react-calendar';
+import { useNavigate } from 'react-router-dom';
 
 interface CheckIn {
   id: number;
@@ -10,12 +11,39 @@ interface CheckIn {
   user_id: number;
 }
 
+interface WorkoutRead {
+  id: number;
+  name: string;
+  check_in_id: number;
+  exercise_logs: any[]; 
+}
+
 export const HomePage = () => {
   const { token } = useAuth();
   const [checkIns, setCheckIns] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate()
+
+
+  const TodayDate = () => {
+    const date  =  new Date().toLocaleDateString()
+    const dateArray = date.split("/")
+    return `${dateArray[2]}-${dateArray[0]}-${dateArray[1]}`
+  }
+
+  const dateToday = TodayDate();
+
 
   const handleCheckIn = async () =>{
+    if (!token) {
+        setError("You must be logged in to check in.");
+        return;
+    }
+
+    if(checkIns.includes(dateToday)) {
+      setError("Already Checked in for Today")
+      return;
+    }
     try{
       const response = await fetch("http://127.0.0.1:8000/checkins/", {
         method: "POST",
@@ -25,10 +53,34 @@ export const HomePage = () => {
         },
       });
       if(!response.ok){
-        throw new Error("Something went wrong while checking In!")
+        const err = await response.json()
+        throw new Error( err.detail || "Something went wrong while checking In!")
       }
       const newCheckIn: CheckIn = await response.json();
-      setCheckIns(prevCheckIns => [...prevCheckIns, newCheckIn.check_in_date]);      
+      setCheckIns(prevCheckIns => [...prevCheckIns, newCheckIn.check_in_date]);
+      
+      const workoutResponse = await fetch("http://127.0.0.1:8000/workouts/", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                check_in_id: newCheckIn.id,
+                name: "Today's Workout" // We can let the user rename this later
+            })
+        });
+
+        if (!workoutResponse.ok) {
+            
+            const err = await workoutResponse.json();
+            throw new Error(err.detail || "Check-in succeeded, but failed to create workout.");
+        }
+
+        const newWorkout: WorkoutRead = await workoutResponse.json();
+        console.log(`Navigating to /workout/${newWorkout.id}`);
+        navigate(`/workout/${newWorkout.id}`);
+
     } catch (err: any) {
       console.error(err)
       setError(err.message)
@@ -90,13 +142,18 @@ export const HomePage = () => {
           font-weight: bold;
           border-radius: 50%;
         }
+        .greyed {
+          color: grey;
+        }
       `}</style>
       
       <Calendar
         tileClassName={getTileClassName} 
       />
-
-      <button onClick={handleCheckIn}>Check-in For Today</button>
+      <button 
+        onClick={handleCheckIn}
+        className={checkIns.includes(dateToday) ? 'greyed': ''}
+      >Check-in For Today</button>
       
       {error && <p style={{color: 'red'}}>{error}</p>}
     </div>
