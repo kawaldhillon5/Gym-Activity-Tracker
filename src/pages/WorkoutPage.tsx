@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { AddSetLogForm } from '../components/AddSetLog';
 
 
 
@@ -35,7 +36,7 @@ export const WorkoutPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [exerciseNameInput, setExerciseNameInput] = useState <string >("")
+  const [exerciseNameInput, setExerciseNameInput] = useState <string >("");
 
   const handelAddExercise = async (e : React.FormEvent) =>{
     e.preventDefault();
@@ -68,7 +69,7 @@ export const WorkoutPage = () => {
         const newExerciseLog : ExerciseLog = await addExerciseResponse.json();
 
         setWorkout(prevWorkout => {
-            if (!prevWorkout) return null; // Should never happen, but good for TS
+            if (!prevWorkout) return null; 
             return {
             ...prevWorkout,
             exercise_logs: [...prevWorkout.exercise_logs, newExerciseLog]
@@ -76,10 +77,33 @@ export const WorkoutPage = () => {
         });
 
         setExerciseNameInput("");
-    } catch (err: any) {
-      setError(err.message);
+        } catch (err: any) {
+        setError(err.message);
+        }
     }
-}
+
+    const handleSetAdded = (newSet: SetLog, exerciseId: number) => {
+        setWorkout(prevWorkout => {
+        if (!prevWorkout) return null;
+
+        const updatedExerciseLogs = prevWorkout.exercise_logs.map(exercise => {
+            
+            if (exercise.id !== exerciseId) {
+            return exercise;
+            }
+
+            return {
+            ...exercise, 
+            set_logs: [...exercise.set_logs, newSet] 
+            };
+        });
+
+        return {
+            ...prevWorkout, 
+            exercise_logs: updatedExerciseLogs 
+        };
+        });
+    };
   
 
   useEffect(() => {
@@ -158,9 +182,7 @@ export const WorkoutPage = () => {
           workout.exercise_logs.map(exercise => (
             <div key={exercise.id} style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '10px', marginBottom: '15px' }}>
               <h2>{exercise.exercise_name}</h2>
-              
-              <button>Add Set (Coming Soon)</button>
-              
+              <AddSetLogForm setNum = {exercise.set_logs.length + 1} exerciseLogId = {exercise.id} onSetAdded={(newSet) => handleSetAdded(newSet, exercise.id)} />              
               {exercise.set_logs.length === 0 ? (
                 <p>No sets logged for this exercise.</p>
               ) : (
