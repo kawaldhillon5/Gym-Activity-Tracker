@@ -5,6 +5,9 @@ import { AddSetLogForm } from '../components/AddSetLog';
 
 import '../css/workout_page.css'
 
+const url = import.meta.env.VITE_API_URL
+
+
 interface SetLog {
   id: number;
   set_number: number;
@@ -48,7 +51,7 @@ export const WorkoutPage = () => {
     }
 
     try {
-        const addExerciseResponse = await fetch("http://127.0.0.1:8000/workouts/exercise-logs/",
+        const addExerciseResponse = await fetch(`${url}/workouts/exercise-logs/`,
             {
                 method: "POST",
                 headers:{
@@ -118,7 +121,7 @@ export const WorkoutPage = () => {
         setLoading(true);
         setError(null);
         
-        const response = await fetch(`http://127.0.0.1:8000/workouts/${workoutId}`, {
+        const response = await fetch(`${url}/workouts/${workoutId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

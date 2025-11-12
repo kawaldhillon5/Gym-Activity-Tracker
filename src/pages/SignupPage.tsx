@@ -3,6 +3,8 @@ import React, { useState } from 'react'; // Import useState
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
+const url = import.meta.env.VITE_API_URL
+
 export const SignupPage = () => {
 
     const [username, setUsername] = useState('');
@@ -16,7 +18,7 @@ export const SignupPage = () => {
         event.preventDefault();
         setError(null)
         try {
-            const response = await fetch("http://127.0.0.1:8000/user/", {
+            const response = await fetch(`${url}/user/`, {
                 method: "POST",
                 body: JSON.stringify({
                     user_name: username,

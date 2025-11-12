@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+const url = import.meta.env.VITE_API_URL
+
 // 1. Define a simple type for our User object
 // (This should match your `UserRead` schema in the backend)
 interface User {
@@ -34,7 +36,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     // We only run this if we have a token but no user data
     if (token && !user) {
-      fetch('http://127.0.0.1:8000/user/me', {
+      fetch(`${url}/user/me`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -68,7 +70,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     try {
       // Step 1: Get the token
-      const tokenResponse = await fetch("http://127.0.0.1:8000/user/login", {
+      const tokenResponse = await fetch(`${url}/user/login`, {
         method: "POST",
         body: formData,
       });
@@ -86,7 +88,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setToken(newToken); // This will trigger the useEffect above, but we can be faster
 
       // Step 3: Use the new token to get the user data
-      const userResponse = await fetch('http://127.0.0.1:8000/user/me', {
+      const userResponse = await fetch(`${url}/user/me`, {
         headers: {
           'Authorization': `Bearer ${newToken}`,
         },

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 
+const url = import.meta.env.VITE_API_URL
+
 interface SetLog {
   id: number;
   set_number: number;
@@ -33,7 +35,7 @@ export const AddSetLogForm = (props: AddSetLogFormProps) =>{
         e.preventDefault()
         setError(null)
         try {
-            const addSetResponse  = await fetch("http://127.0.0.1:8000/workouts/set-logs/",
+            const addSetResponse  = await fetch(`${url}/workouts/set-logs/`,
             {
                 method: "POST",
                 headers:{

@@ -7,6 +7,9 @@ import { useNavigate } from 'react-router-dom';
 
 import '../css/HomePage.css'
 
+const url = import.meta.env.VITE_API_URL
+
+
 interface CheckIn {
   id: number;
   check_in_date: string; 
@@ -47,7 +50,7 @@ export const HomePage = () => {
       return;
     }
     try{
-      const response = await fetch("http://127.0.0.1:8000/checkins/", {
+      const response = await fetch(`${url}:8000/checkins/`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -61,7 +64,7 @@ export const HomePage = () => {
       const newCheckIn: CheckIn = await response.json();
       setCheckIns(prevCheckIns => [...prevCheckIns, newCheckIn.check_in_date]);
       
-      const workoutResponse = await fetch("http://127.0.0.1:8000/workouts/", {
+      const workoutResponse = await fetch(`${url}/workouts/`, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -103,7 +106,7 @@ export const HomePage = () => {
   useEffect(() => {
     const fetchCheckIns = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/checkins/", {
+        const response = await fetch(`${url}/checkins/`, {
           headers: {
             "Authorization": `Bearer ${token}`,
           },
