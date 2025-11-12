@@ -5,6 +5,8 @@ import type { TileClassNameFunc } from 'react-calendar';
 import Calendar from 'react-calendar';
 import { useNavigate } from 'react-router-dom';
 
+import '../css/HomePage.css'
+
 interface CheckIn {
   id: number;
   check_in_date: string; 
@@ -25,13 +27,13 @@ export const HomePage = () => {
   const navigate = useNavigate()
 
 
-  const TodayDate = () => {
+  const todayDate = () => {
     const date  =  new Date().toLocaleDateString()
     const dateArray = date.split("/")
     return `${dateArray[2]}-${dateArray[0]}-${dateArray[1]}`
   }
 
-  const dateToday = TodayDate();
+  const dateToday = todayDate();
 
 
   const handleCheckIn = async () =>{
@@ -132,21 +134,9 @@ export const HomePage = () => {
  
   
   return (
-    <div>
+    <div id='home_page'>
       <h1>Welcome to the Gym Tracker</h1>
 
-      
-      <style>{`
-        .highlight {
-          background: #d0f0c0; /* A light green */
-          font-weight: bold;
-          border-radius: 50%;
-        }
-        .greyed {
-          color: grey;
-        }
-      `}</style>
-      
       <Calendar
         tileClassName={getTileClassName} 
       />

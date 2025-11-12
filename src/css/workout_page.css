@@ -1,0 +1,29 @@
+#add_exercise_form>input{
+    border: 0.5px, solid, black;
+    border-radius: 5px;
+    font-size: larger;
+    padding: 6px;
+}
+
+.exercise_component{
+    overflow-y: auto;
+}
+
+.add_set_form>form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.add_set_form>form>fieldset{
+    width: 270px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+}
+
+#set_table>thead>tr>th{
+    text-align: center;
+}

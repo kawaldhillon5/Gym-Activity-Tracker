@@ -72,13 +72,13 @@ export const AddSetLogForm = (props: AddSetLogFormProps) =>{
 
 
     return (
-        <>
+        <div className='add_set_form'>
             { isActive ?
                 <>
                     <form onSubmit={handleAddSet}>
                         <h3>Add Set no. {props.setNum}</h3>
                         <fieldset>
-                        <label htmlFor="setReps">Set Reps</label>
+                        <label htmlFor="setReps">Set Reps </label>
                         <input
                             required
                             name='setReps' 
@@ -88,7 +88,7 @@ export const AddSetLogForm = (props: AddSetLogFormProps) =>{
                         />
                         </fieldset>
                         <fieldset>
-                            <label htmlFor="setWeight">Weights(kg)</label>
+                            <label htmlFor="setWeight">Weights(kg) </label>
                             <input
                                 required
                                 type="number" 
@@ -98,7 +98,7 @@ export const AddSetLogForm = (props: AddSetLogFormProps) =>{
                             />
                         </fieldset>
                         <fieldset>
-                            <label htmlFor="setComment">Comments</label>
+                            <label htmlFor="setComment">Comments </label>
                             <input 
                                 type="text" 
                                 name='setComments'
@@ -106,14 +106,16 @@ export const AddSetLogForm = (props: AddSetLogFormProps) =>{
                                 onChange={(e)=>{setNewSetComments(e.target.value)}}    
                             />
                         </fieldset>
-                        <button type='submit'>Add Set</button>
-                        <button onClick={changeActiveState} type='button'>Close</button>
+                        <div>
+                            <button type='submit'>Add Set</button>
+                            <button onClick={changeActiveState} type='button'>Close</button>
+                        </div>
                     </form>
                 {error && <p style={{color: 'red'}}>{error}</p>}
                 </>
                 :
                 <button onClick={changeActiveState}>Add Set</button>
             }
-        </>
+        </div>
     )
 }

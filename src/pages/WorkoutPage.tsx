@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { AddSetLogForm } from '../components/AddSetLog';
 
-
+import '../css/workout_page.css'
 
 interface SetLog {
   id: number;
@@ -106,7 +106,7 @@ export const WorkoutPage = () => {
     };
   
 
-  useEffect(() => {
+    useEffect(() => {
 
     if (!token || !workoutId) {
       setLoading(false);
@@ -163,7 +163,7 @@ export const WorkoutPage = () => {
       
       <hr />
 
-      <form onSubmit={handelAddExercise} style={{ marginBottom: '20px' }}>
+      <form id='add_exercise_form' onSubmit={handelAddExercise} style={{ marginBottom: '20px' }}>
         <h3>Add New Exercise</h3>
         <input 
           type="text"
@@ -174,25 +174,25 @@ export const WorkoutPage = () => {
         <button type="submit">Add Exercise</button>
       </form>
 
-      <div style={{ marginTop: '20px' }}>
+      <div className='exercise_component' style={{ marginTop: '20px' }}>
         {workout.exercise_logs.length === 0 ? (
           <p>You haven't added any exercises to this workout yet.</p>
         ) : (
           // First map: Loop over the Exercises
           workout.exercise_logs.map(exercise => (
-            <div key={exercise.id} style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '10px', marginBottom: '15px' }}>
+            <div className='set_item' key={exercise.id} style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '10px', marginBottom: '15px' }}>
               <h2>{exercise.exercise_name}</h2>
               <AddSetLogForm setNum = {exercise.set_logs.length + 1} exerciseLogId = {exercise.id} onSetAdded={(newSet) => handleSetAdded(newSet, exercise.id)} />              
               {exercise.set_logs.length === 0 ? (
                 <p>No sets logged for this exercise.</p>
               ) : (
-                <table style={{ width: '100%', marginTop: '10px' }}>
+                <table id='set_table' style={{ width: '100%', marginTop: '10px' }}>
                   <thead>
                     <tr>
-                      <th style={{ textAlign: 'left' }}>Set</th>
-                      <th style={{ textAlign: 'left' }}>Weight (kg)</th>
-                      <th style={{ textAlign: 'left' }}>Reps</th>
-                      <th style={{ textAlign: 'left' }}>Comment</th>
+                      <th >Set</th>
+                      <th >Weight (kg)</th>
+                      <th >Reps</th>
+                      <th >Comment</th>
                     </tr>
                   </thead>
                   <tbody>
