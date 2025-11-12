@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const url = import.meta.env.VITE_API_URL
 
 export const SignupPage = () => {
+    console.log(url)
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');

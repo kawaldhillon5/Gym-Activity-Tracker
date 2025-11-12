@@ -50,7 +50,7 @@ export const HomePage = () => {
       return;
     }
     try{
-      const response = await fetch(`${url}:8000/checkins/`, {
+      const response = await fetch(`${url}/checkins/`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
