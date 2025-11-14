@@ -6,6 +6,7 @@ import Calendar from 'react-calendar';
 import { useNavigate } from 'react-router-dom';
 
 import '../css/HomePage.css'
+import { set } from 'date-fns';
 
 const url = import.meta.env.VITE_API_URL
 
@@ -30,13 +31,47 @@ export const HomePage = () => {
   const navigate = useNavigate()
 
 
-  const todayDate = () => {
-    const date  =  new Date().toLocaleDateString()
-    const dateArray = date.split("/")
+  const localDateString = (date: Date) => {
+    const dateLocal  =  date.toLocaleDateString()
+    const dateArray = dateLocal.split("/")
     return `${dateArray[2]}-${dateArray[0]}-${dateArray[1]}`
   }
 
-  const dateToday = todayDate();
+  const dateToday = localDateString(new Date());
+
+  const handleClickDate = async (date: Date) =>{
+    const dateString = localDateString(date)
+        if (!token) {
+        setError("You must be logged in to View Workout.");
+        return;
+    }
+    if(checkIns.includes(dateString)) {
+      try {
+
+        const response = await fetch(`${url}/workouts/checkin-info/${dateString}`,{
+          method: "GET",
+          headers:{
+            "Authorization": `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        if(!response.ok){
+          const err = await response.json()
+          throw new Error( err.detail || "Something went wrong while Loading Workout Info!")
+        }
+        
+        const workout : WorkoutRead = await response.json()
+        navigate(`/workout/${workout.id}`);
+
+      }catch (err: any){
+        console.error(err)
+        setError(err.message)
+      }
+      
+    } else {
+      setError("No Workout Data Avaliable for this date");
+    }
+  }
 
 
   const handleCheckIn = async () =>{
@@ -86,7 +121,7 @@ export const HomePage = () => {
         console.log(`Navigating to /workout/${newWorkout.id}`);
         navigate(`/workout/${newWorkout.id}`);
 
-    } catch (err: any) {
+    } catch (err: any) { 
       console.error(err)
       setError(err.message)
     }
@@ -141,7 +176,8 @@ export const HomePage = () => {
       <h1>Welcome to the Gym Tracker</h1>
 
       <Calendar
-        tileClassName={getTileClassName} 
+        tileClassName={getTileClassName}
+        onClickDay={(value, e) =>{handleClickDate(value)}} 
       />
       <button 
         onClick={handleCheckIn}
