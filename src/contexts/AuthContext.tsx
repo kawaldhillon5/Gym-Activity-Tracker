@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (!tokenResponse.ok) {
         const result = await tokenResponse.json();
-        throw new Error( 'Login failed');
+        throw new Error(result.detail || 'Login failed');
       }
 
       const tokenData: { access_token: string } = await tokenResponse.json();
@@ -110,7 +110,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setToken(null);
       setUser(null);
       localStorage.removeItem('accessToken');
-      throw err; // Re-throw the error for the LoginPage to display
+      throw err; 
     }
   };
 
