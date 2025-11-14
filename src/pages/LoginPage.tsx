@@ -13,17 +13,18 @@ export const LoginPage = () => {
     const [error, setError] = useState<string | null>(null);
     const {login, token, logout} = useAuth()
     const navigate = useNavigate()
+    
     const handleSubmit = async (event: React.SyntheticEvent) => {
         event.preventDefault();
         setError(null);
         try {
        
         await login(username, password);
-        
+        navigate("/")
+
         } catch (err: any) {
         setError(err.message || 'Login failed');
         }
-        navigate("/")
     };
 
     return (

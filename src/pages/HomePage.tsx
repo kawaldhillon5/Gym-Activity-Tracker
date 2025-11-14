@@ -6,7 +6,6 @@ import Calendar from 'react-calendar';
 import { useNavigate } from 'react-router-dom';
 
 import '../css/HomePage.css'
-import { set } from 'date-fns';
 
 const url = import.meta.env.VITE_API_URL
 
@@ -177,7 +176,7 @@ export const HomePage = () => {
 
       <Calendar
         tileClassName={getTileClassName}
-        onClickDay={(value, e) =>{handleClickDate(value)}} 
+        onClickDay={(value) =>{handleClickDate(value)}} 
       />
       <button 
         onClick={handleCheckIn}

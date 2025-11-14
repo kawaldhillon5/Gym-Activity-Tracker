@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (!tokenResponse.ok) {
         const result = await tokenResponse.json();
-        throw new Error(result.detail || 'Login failed');
+        throw new Error( 'Login failed');
       }
 
       const tokenData: { access_token: string } = await tokenResponse.json();
