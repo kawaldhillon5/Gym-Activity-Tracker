@@ -1,9 +1,10 @@
 // src/pages/SignupPage.tsx
 import React, { useMemo, useState, type ChangeEvent, type FocusEvent } from 'react'; // Import useState 
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { InputGroup } from '../components/InputGroup';
 import { CheckCircle, Dumbbell, Lock, Mail, User } from 'lucide-react';
+import "../css/SignupPage.css"
 
 const url = import.meta.env.VITE_API_URL
 
@@ -154,7 +155,7 @@ export const SignupPage = () => {
     };
 
     return (
-        <div>
+        <div className='signup_main_div'>
         <h1>Sign Up</h1>
         { token ?
             <>
@@ -163,13 +164,13 @@ export const SignupPage = () => {
             </>
 
             :
-            <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center relative z-10 bg-slate-800">
-                <div className="mb-8">
-                    <div className="flex items-center gap-2 mb-2 text-emerald-400">
-                    <Dumbbell className="w-8 h-8" />
-                    <span className="text-2xl font-black tracking-tighter uppercase">IronLog</span>
+            <div className="signup_form_div">
+                <div className="signup_header_div">
+                    <div className="signup_header">
+                        <Dumbbell className="signup_header_icon" />
+                        <span className="signup_header_text">Gym Tracker</span>
                     </div>
-                    <p className="text-slate-400">Track every rep. Visualize every gain.</p>
+                    <p className="sign_up_secondary_text">Track every rep. Visualize every gain.</p>
                 </div>
 
                 <form onSubmit={handleSubmit}>
@@ -247,8 +248,8 @@ export const SignupPage = () => {
                         <span>{error}</span>
                     </div>
                 </form>
-                <div className="mt-8 text-center text-sm text-slate-500">
-                    Already a member? <a href="#" className="text-emerald-400 hover:underline">Log In</a>
+                <div className="signup_login_link_div">
+                    Already a member? <Link to={'/login'} >Log In</Link>
                 </div>
             </div>
         }
