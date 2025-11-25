@@ -1,30 +1,140 @@
 // src/pages/SignupPage.tsx
-import React, { useState } from 'react'; // Import useState 
+import React, { useMemo, useState, type ChangeEvent, type FocusEvent } from 'react'; // Import useState 
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { InputGroup } from '../components/InputGroup';
+import { CheckCircle, Dumbbell, Lock, Mail, User } from 'lucide-react';
 
 const url = import.meta.env.VITE_API_URL
 
-export const SignupPage = () => {
-    console.log(url)
+interface FormData {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
 
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [email, setEmail] = useState('')
+interface TouchedState {
+  name: boolean;
+  email: boolean;
+  password: boolean;
+  confirmPassword: boolean;
+}
+
+type SignupStatus = 'idle' | 'Loading' | 'success';
+
+interface PasswordValidation {
+    isValid: boolean;
+    error: string ;
+}
+
+interface ValidationResult {
+  name: boolean;
+  email: boolean;
+  password: PasswordValidation;
+  match: boolean;
+  count: number;
+  allValid: boolean;
+}
+
+export const SignupPage = () => {
+    
+    const [formData, setFormData] = useState<FormData>({
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+    });
+
+    const [touched, setTouched] = useState<TouchedState>({
+        name: false,
+        email: false,
+        password: false,
+        confirmPassword: false
+    });
+
+    const [status, setStatus] = useState<SignupStatus>('idle');
+
+    
     const [error, setError] = useState(null)
     const navigate = useNavigate()
     const {token, logout} = useAuth()
 
+    const validatePassword = (password: string)=>{
+
+        const passwordValid : PasswordValidation= { 
+            isValid : false,
+            error : ""
+        }
+
+        if (password.length < 8) {
+            passwordValid.error = "Password must be at least 8 characters long.";
+            return passwordValid
+        }
+        if (!/[a-z]/.test(password)) {
+            passwordValid.error = "Password must contain at least one lowercase letter.";
+            return passwordValid
+        }
+        if (!/[A-Z]/.test(password)) {
+            passwordValid.error = "Password must contain at least one uppercase letter.";
+            return passwordValid
+        }
+        if (!/[0-9]/.test(password)) {
+            passwordValid.error = "Password must contain at least one number.";
+            return passwordValid
+        }
+        if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+            passwordValid.error =  "Password must contain at least one special character.";
+            return passwordValid
+        }
+        passwordValid.isValid = true;
+        return passwordValid
+         
+    };
+
+    const validation = useMemo<ValidationResult>(() => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        const nameValid = formData.name.length >= 3;
+        const emailValid = emailRegex.test(formData.email);
+        const passValid = validatePassword(formData.password);
+        const matchValid = formData.confirmPassword.length > 0 && formData.confirmPassword === formData.password;
+
+        return {
+        name: nameValid,
+        email: emailValid,
+        password: passValid,
+        match: matchValid,
+        count: [nameValid, emailValid, passValid.isValid, matchValid].filter(Boolean).length,
+        allValid: nameValid && emailValid && passValid.isValid && matchValid
+        };
+    }, [formData]);
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
+        const { name } = e.target;
+        setTouched(prev => ({ ...prev, [name as keyof TouchedState]: true }));
+    };    
+
     const handleSubmit = async (event: React.SyntheticEvent) => {
         event.preventDefault();
         setError(null)
+        if( ! validation.allValid){
+            throw new Error("Please Check All fileds")
+        }
         try {
+            setStatus("Loading")
             const response = await fetch(`${url}/user/`, {
                 method: "POST",
                 body: JSON.stringify({
-                    user_name: username,
-                    email: email,
-                    password: password
+                    user_name: formData.name,
+                    email: formData.email,
+                    password: formData.password,
+                    confirmPassword :  formData.confirmPassword
                 }),
                 headers: {
                     'Content-Type': 'application/json'
@@ -34,6 +144,7 @@ export const SignupPage = () => {
                 const result = await response.json();
                 throw new Error(result.detail || "Sign Up Failed")
             }
+            setStatus("success")
             console.log("Sign Up sucessfull")
             navigate("/login");
         } catch (err : any) {
@@ -52,41 +163,94 @@ export const SignupPage = () => {
             </>
 
             :
+            <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center relative z-10 bg-slate-800">
+                <div className="mb-8">
+                    <div className="flex items-center gap-2 mb-2 text-emerald-400">
+                    <Dumbbell className="w-8 h-8" />
+                    <span className="text-2xl font-black tracking-tighter uppercase">IronLog</span>
+                    </div>
+                    <p className="text-slate-400">Track every rep. Visualize every gain.</p>
+                </div>
 
-            <form onSubmit={handleSubmit}>
-                <div>
-                <label htmlFor="username">Username:</label>
-                {/* 4. Wire up the input's value and onChange handler */}
-                <input
-                    type="text"
-                    id="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                <form onSubmit={handleSubmit}>
+                    <InputGroup 
+                icon={<User size={20} />}
+                type="text" 
+                name="name" 
+                placeholder="Full Name" 
+                value={formData.name}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                isValid={validation.name}
+                isTouched={touched.name}
+                errorMsg="Name must be at least 3 characters"
                 />
-                </div>
-                <div>
-                <label htmlFor="email">Email:</label>
-                <input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+
+                {/* Email Input */}
+                <InputGroup 
+                icon={<Mail size={20} />}
+                type="email" 
+                name="email" 
+                placeholder="Email Address" 
+                value={formData.email}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                isValid={validation.email}
+                isTouched={touched.email}
+                errorMsg="Please enter a valid email"
                 />
-                </div>
-                <div>
-                <label htmlFor="password">Password:</label>
-                <input
-                    type="password"
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+
+                {/* Password Input */}
+                <InputGroup 
+                icon={<Lock size={20} />}
+                type="password" 
+                name="password" 
+                placeholder="Password (Min 8 chars)" 
+                value={formData.password}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                isValid={validation.password.isValid}
+                isTouched={touched.password}
+                errorMsg={validation.password.error}
                 />
+
+                {/* Confirm Password Input */}
+                <InputGroup 
+                icon={<CheckCircle size={20} />}
+                type="password" 
+                name="confirmPassword" 
+                placeholder="Confirm Password" 
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                isValid={validation.match}
+                isTouched={touched.confirmPassword}
+                errorMsg="Passwords do not match"
+                />
+
+                <button
+                disabled={!validation.allValid || status !== 'idle'}
+                className={`w-full py-4 rounded-xl font-bold text-lg tracking-wide transition-all duration-300 flex items-center justify-center gap-2 mt-4
+                    ${validation.allValid 
+                    ? 'bg-emerald-500 hover:bg-emerald-400 text-white shadow-lg shadow-emerald-900/50 cursor-pointer transform hover:-translate-y-1' 
+                    : 'bg-slate-700 text-slate-500 cursor-not-allowed'
+                    }
+                `}
+                >
+                {status === 'idle' && (
+                    <>Start Training </>
+                )}
+                {status === 'Loading' && "Loading..."}
+                {status === 'success' && "Sucess"}
+                </button>
+                    <div>
+                        <span>{error}</span>
+                    </div>
+                </form>
+                <div className="mt-8 text-center text-sm text-slate-500">
+                    Already a member? <a href="#" className="text-emerald-400 hover:underline">Log In</a>
                 </div>
-                <button type="submit">Sign Up</button>
-                <div>
-                    <span>{error}</span>
-                </div>
-            </form>
+            </div>
         }
         </div>
     );
