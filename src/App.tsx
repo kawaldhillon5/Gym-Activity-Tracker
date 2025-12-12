@@ -8,6 +8,7 @@ import { AuthRequired } from './components/AuthRequired';
 import { WorkoutPage } from './pages/WorkoutPage';
 
 import './App.css'
+import { LandingPage } from './pages/LandingPage';
 
 function App() {
   return (
@@ -15,10 +16,11 @@ function App() {
       <Navbar />
       <div id='routes'>
         <Routes>
+          <Route path='/' element ={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           < Route element = {<AuthRequired />}>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/home" element={<HomePage />} />
             <Route path="/workout/:workoutId" element={<WorkoutPage />} />
           </Route>
         </Routes>

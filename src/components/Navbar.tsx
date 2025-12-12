@@ -12,6 +12,10 @@ export const Navbar = () =>{
         navigate('/login')
     }
 
+    if (user == null){
+        return null
+    }
+
     return (
         <nav>
             <Link className="home_link" to={'/'}>Home</Link>

@@ -11,7 +11,7 @@ interface InputGroupProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export function InputGroup({ icon, isValid, isTouched, errorMsg, ...props }: InputGroupProps){
 
-    const hasValue = props.value && (props.value as string).length > 0;
+  const hasValue = props.value && (props.value as string).length > 0;
   
   let fieldClass = "input-field";
   let iconClass = "icon-default";

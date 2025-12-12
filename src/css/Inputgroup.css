@@ -1,92 +1,78 @@
+/* src/css/InputGroup.css */
+
 .input-group-container {
     position: relative;
     width: 100%;
-    margin-bottom: 5px;
+    margin-bottom: 15px;
     display: grid;
-    grid-template-columns: 1fr 8fr 1fr ;
-    grid-template-rows: 2fr 1fr;
+    grid-template-columns: 48px 1fr 40px; 
+    grid-template-rows: auto auto;
     align-items: center;
-    justify-content: center;
 }
 
-/* Icon Positioning */
+/* 1. Icon */
 .input-icon-wrapper {
-    /* position: absolute;
-    left: 1rem; 
-    top: 30%; */
-    transition: color 0.3s ease;
-    z-index: 10;
-    pointer-events: none;
     grid-area: 1/1/2/2;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
 }
 
-/* Main Input Field */
+/* 2. Input Field */
 .input-field {
-    margin: 1%;
-    /* width: 100%; */
-    background-color: rgba(15, 23, 42, 0.5); /* slate-900 with opacity */
-    border: 2px solid #334155; /* slate-700 */
-    border-radius: 0.75rem; /* 12px */
-    padding: 0.5rem 1rem 0.5rem 1rem; /* Top/Bot: 14px, Left: 48px */
-    color: white;
-    font-size: 1.2rem;
+    grid-area: 1/1/2/4;
+    width: 100%;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 16px 16px 16px 48px;
+    color: var(--text-primary);
+    font-size: 16px;
     outline: none;
-    transition: all 0.3s ease;
-    grid-area: 1/2/2/3 ;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
 }
 
 .input-field::placeholder {
-    color: #64748b; /* slate-500 */
-}
-
-.input-field:hover {
-    background-color: #0f172a; /* slate-900 */
+    color: var(--text-secondary);
+    opacity: 0.5;
 }
 
 .input-field:focus {
-    border-color: #10b981; /* emerald-500 */
-}
-
-/* Dynamic Validation States */
-.input-field.valid {
-    border-color: rgba(16, 185, 129, 0.5); /* emerald-500/50 */
+    border-color: var(--border-focus);
+    background-color: var(--bg-highlight);
 }
 
 .input-field.error {
-    border-color: rgba(239, 68, 68, 0.5); /* red-500/50 */
+    border-color: var(--error);
 }
 
-/* Icon Colors */
-.icon-default { color: #64748b; }
-.icon-valid { color: #10b981; }
-.icon-error { color: #ef4444; }
-
-/* Status Icon (Right Side) */
+/* 3. Status Icon */
 .status-icon-wrapper {
-    /* position: absolute;
-    right: 1rem;
-    top: 30%; */
-    transition: opacity 0.3s;
-    pointer-events: none;
     grid-area: 1/3/2/4;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
 }
 
-/* Error Message Slide Down */
+/* 4. Error Message Animation */
 .error-message-container {
-    transition: all 0.3s ease;
-    height: 30px;
-    max-height: 30px;
-    margin-top: 0;
     grid-area: 2/1/3/4;
-    opacity: 0%;
+    height: 0; /* Hidden by default */
+    overflow: hidden;
+    transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth slide */
+    padding-left: 12px;
 }
 
 .error-message-container.visible {
-    opacity: 100%;
+    height: 40px; /* Slides down to this height */
+    margin-top: 1px;
 }
 
 .error-text {
-    font-size: 0.75rem;
-    color: #f87171; /* red-400 */
-    padding-left: 0.25rem;
+    font-size: 0.8rem;
+    color: var(--error);
+    font-family: monospace;
 }
