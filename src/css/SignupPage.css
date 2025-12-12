@@ -1,11 +1,71 @@
-.signup_main_div{
-    background-color: rgb(6, 35, 61);
-    border-radius: 15px;
-    margin: 1rem;
-    height: 100%;
+/* src/css/SignupPage.css */
+
+.signup_main_div {
+    flex-grow: 1;
+    background-color: var(--bg-main);
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    justify-content: flex-end;
+    box-sizing: border-box;
 }
 
+/* Header Section */
+.signup_header_div {
+    margin-bottom: 40px;
+    margin-top: 40px; /* Space from top of phone */
+}
 
-.signup_login_link_div{
-    margin-bottom: 20px;
+.signup_header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+/* The "C" Logo Mark */
+.header_logo {
+    width: 32px;
+    height: 32px;
+    border: 2px solid white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1.2rem;
+    color: white;
+}
+
+.signup_header_text {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    
+}
+
+.sign_up_secondary_text {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.5;
+    font-weight: 600;
+    text-align: left;
+}
+
+/* Footer Link */
+.signup_login_link_div {
+    margin-top: auto;
+    text-align: center;
+    padding-top: 32px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.signup_login_link_div a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 8px;
 }

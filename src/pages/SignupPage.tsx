@@ -3,7 +3,7 @@ import React, { useMemo, useState, type ChangeEvent, type FocusEvent } from 'rea
 import { useAuth } from '../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { InputGroup } from '../components/InputGroup';
-import { CheckCircle, Dumbbell, Lock, Mail, User } from 'lucide-react';
+import { CheckCircle, Lock, Mail, User } from 'lucide-react';
 import "../css/SignupPage.css"
 
 const url = import.meta.env.VITE_API_URL
@@ -151,12 +151,12 @@ export const SignupPage = () => {
         } catch (err : any) {
             console.error(err);
             setError(err.message);
+            setStatus("idle")
         }
     };
 
     return (
         <div className='signup_main_div'>
-        <h1>Sign Up</h1>
         { token ?
             <>
                 <div>User Already Logged in</div>
@@ -167,10 +167,10 @@ export const SignupPage = () => {
             <div className="signup_form_div">
                 <div className="signup_header_div">
                     <div className="signup_header">
-                        <Dumbbell className="signup_header_icon" />
-                        <span className="signup_header_text">Gym Tracker</span>
+                        <div className="header_logo">C</div>
+                        <span className="signup_header_text">Caliber</span>
                     </div>
-                    <p className="sign_up_secondary_text">Track every rep. Visualize every gain.</p>
+                    <p className="sign_up_secondary_text">Sign Up to Start Your Journey</p>
                 </div>
 
                 <form onSubmit={handleSubmit}>
@@ -230,23 +230,20 @@ export const SignupPage = () => {
                 />
 
                 <button
-                disabled={!validation.allValid || status !== 'idle'}
-                className={`w-full py-4 rounded-xl font-bold text-lg tracking-wide transition-all duration-300 flex items-center justify-center gap-2 mt-4
-                    ${validation.allValid 
-                    ? 'bg-emerald-500 hover:bg-emerald-400 text-white shadow-lg shadow-emerald-900/50 cursor-pointer transform hover:-translate-y-1' 
-                    : 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                    }
-                `}
+                    disabled={!validation.allValid || status !== 'idle'}
+                    className="btn-primary"
+                    style={{ marginTop: '32px', opacity: validation.allValid ? 1 : 0.5 }}
                 >
-                {status === 'idle' && (
-                    <>Start Training </>
-                )}
-                {status === 'Loading' && "Loading..."}
-                {status === 'success' && "Sucess"}
+                    {status === 'idle' && "Create Account"}
+                    {status === 'Loading' && "Creating Account..."}
+                    {status === 'success' && "Success"}
                 </button>
-                    <div>
-                        <span>{error}</span>
+                
+                {error && (
+                    <div className='error-text' style={{ color: 'var(--error)', marginTop: '16px', textAlign: 'center', fontSize: '0.9rem' }}>
+                        {error}
                     </div>
+                )}
                 </form>
                 <div className="signup_login_link_div">
                     Already a member? <Link to={'/login'} >Log In</Link>
