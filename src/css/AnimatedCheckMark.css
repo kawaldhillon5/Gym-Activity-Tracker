@@ -1,0 +1,30 @@
+.checkmark-path {
+    stroke-dasharray: 70;
+    stroke-dashoffset: 70;
+    animation: draw-checkmark 0.6s ease-out forwards;
+}
+
+@keyframes draw-checkmark {
+    to {
+    stroke-dashoffset: 0;
+    }
+}
+
+.checkmark-svg {
+    animation: scale-in 0.3s ease-out;
+}
+
+@keyframes scale-in {
+    from {
+    transform: scale(0.8);
+    opacity: 0;
+    }
+    to {
+    transform: scale(1);
+    opacity: 1;
+    }
+}
+
+#button_success{
+    padding: 0;
+}
