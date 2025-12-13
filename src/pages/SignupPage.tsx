@@ -4,7 +4,12 @@ import { useAuth } from '../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { InputGroup } from '../components/InputGroup';
 import { CheckCircle, Lock, Mail, User } from 'lucide-react';
+import { LineWobble } from 'ldrs/react';
+import 'ldrs/react/LineWobble.css'
+import { AnimatedCheckmark } from '../components/AnimatedCheckMark';
+
 import "../css/SignupPage.css"
+
 
 const url = import.meta.env.VITE_API_URL
 
@@ -55,7 +60,8 @@ export const SignupPage = () => {
     });
 
     const [status, setStatus] = useState<SignupStatus>('idle');
-
+    const [isPasswordFocused, setIsPasswordFocused] = useState<boolean>(false)
+    
     
     const [error, setError] = useState(null)
     const navigate = useNavigate()
@@ -174,69 +180,76 @@ export const SignupPage = () => {
                 </div>
 
                 <form onSubmit={handleSubmit}>
-                    <InputGroup 
-                icon={<User size={20} />}
-                type="text" 
-                name="name" 
-                placeholder="Full Name" 
-                value={formData.name}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                isValid={validation.name}
-                isTouched={touched.name}
-                errorMsg="Name must be at least 3 characters"
+                <InputGroup 
+                    icon={<User size={20} />}
+                    type="text" 
+                    name="name" 
+                    placeholder="Full Name" 
+                    value={formData.name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    isValid={validation.name}
+                    isTouched={touched.name}
+                    errorMsg="Name must be at least 3 characters"
                 />
 
                 {/* Email Input */}
                 <InputGroup 
-                icon={<Mail size={20} />}
-                type="email" 
-                name="email" 
-                placeholder="Email Address" 
-                value={formData.email}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                isValid={validation.email}
-                isTouched={touched.email}
-                errorMsg="Please enter a valid email"
+                    icon={<Mail size={20} />}
+                    type="email" 
+                    name="email" 
+                    placeholder="Email Address" 
+                    value={formData.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    isValid={validation.email}
+                    isTouched={touched.email}
+                    errorMsg="Please enter a valid email"
                 />
 
                 {/* Password Input */}
                 <InputGroup 
-                icon={<Lock size={20} />}
-                type="password" 
-                name="password" 
-                placeholder="Password (Min 8 chars)" 
-                value={formData.password}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                isValid={validation.password.isValid}
-                isTouched={touched.password}
-                errorMsg={validation.password.error}
+                    icon={<Lock size={20} />}
+                    type={isPasswordFocused ? "text" : "password"} 
+                    name="password" 
+                    placeholder="Password (Min 8 chars)" 
+                    value={formData.password}
+                    onChange={handleChange}
+                    onFocus={()=>{setIsPasswordFocused(true)}}
+                    onBlur={(e) =>{
+                        setIsPasswordFocused(false) 
+                        handleBlur(e)}}
+                    isValid={validation.password.isValid}
+                    isTouched={touched.password}
+                    errorMsg={validation.password.error}
                 />
 
                 {/* Confirm Password Input */}
                 <InputGroup 
-                icon={<CheckCircle size={20} />}
-                type="password" 
-                name="confirmPassword" 
-                placeholder="Confirm Password" 
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                isValid={validation.match}
-                isTouched={touched.confirmPassword}
-                errorMsg="Passwords do not match"
+                    icon={<CheckCircle size={20} />}
+                    type={isPasswordFocused ? "text" : "password"} 
+                    name="confirmPassword" 
+                    placeholder="Confirm Password" 
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    onFocus={()=>{setIsPasswordFocused(true)}}
+                    onBlur={(e) =>{
+                        setIsPasswordFocused(false) 
+                        handleBlur(e)}}
+                    isValid={validation.match}
+                    isTouched={touched.confirmPassword}
+                    errorMsg="Passwords do not match"
                 />
 
                 <button
                     disabled={!validation.allValid || status !== 'idle'}
                     className="btn-primary"
-                    style={{ marginTop: '32px', opacity: validation.allValid ? 1 : 0.5 }}
+                    id={status === "success" ? 'btn_success': ""}
+                    style={{ marginTop: '32px', opacity: validation.allValid ? 1 : 0.5, boxShadow : validation.allValid ? "0 0 20px white" : "0 0 5px white" }}
                 >
                     {status === 'idle' && "Create Account"}
-                    {status === 'Loading' && "Creating Account..."}
-                    {status === 'success' && "Success"}
+                    {status === 'Loading' && <LineWobble />}
+                    {status === 'success' && <AnimatedCheckmark />}
                 </button>
                 
                 {error && (
