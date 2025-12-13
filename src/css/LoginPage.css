@@ -1,27 +1,74 @@
-#login_page{
-    padding: 2%;
-    width: 90%;
-    height: 70%;
-    margin-top: 20%;
-
+.login_main_div {
+    flex-grow: 1;
+    background-color: var(--bg-main);
     display: flex;
     flex-direction: column;
+    padding: 24px;
+    justify-content: flex-end;
+    box-sizing: border-box;
+}
+
+/* Header Section */
+.login_header_div {
+    margin-bottom: 40px;
+    margin-top: 40px; /* Space from top of phone */
+}
+
+.login_header {
+    display: flex;
     align-items: center;
-    justify-content: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
 }
 
-#login_page>form{
-    height: 100%;
+/* The "C" Logo Mark */
+.header_logo {
+    width: 32px;
+    height: 32px;
+    border: 2px solid white;
+    border-radius: 50%;
     display: flex;
-    flex-direction: column;
-    gap: 3%;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1.2rem;
+    color: white;
 }
 
-#login_page>form>input{
-    border: 0.5px solid black;
-    border-radius: 5px;
-    padding: 6px;
+.login_header_text {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    
+}
+
+.login_secondary_text {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.5;
+    font-weight: 600;
+    text-align: left;
+}
+
+/* Footer Link */
+.login_signup_link_div {
+    margin-top: auto;
     text-align: center;
-    font-size: larger;
+    padding-top: 32px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 40px;
 }
 
+.login_signup_link_div a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+.action_btn{
+    transition: opacity 250ms;
+}

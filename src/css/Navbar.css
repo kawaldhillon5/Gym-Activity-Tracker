@@ -1,15 +1,15 @@
-.auth_links>a,button,span{
+/* .auth_links>a,button,span{
     margin: 5px;
-}
+} */
 
 .auth_links>a{
     color: rgb(230, 240, 248);
 }
 
-nav>a{
+/* nav>a{
     margin-left: 5px;
     color: rgb(230, 240, 248);
-}
+} */
 
 nav{
     background-color: rgb(6, 35, 61);
