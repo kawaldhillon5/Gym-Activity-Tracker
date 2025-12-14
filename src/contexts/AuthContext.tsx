@@ -4,7 +4,7 @@ const url = import.meta.env.VITE_API_URL
 
 // 1. Define a simple type for our User object
 // (This should match your `UserRead` schema in the backend)
-interface User {
+export interface User {
   id: number;
   user_name: string;
 }
