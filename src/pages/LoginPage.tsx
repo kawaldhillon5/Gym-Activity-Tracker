@@ -102,7 +102,7 @@ export const LoginPage = () => {
 
     return (
         <div className='login_main_div'>
-        { token ?
+        { token && status == "idle" ?
             <>
                 <div>
                     User Already Logged in
@@ -155,7 +155,7 @@ export const LoginPage = () => {
                     >
                         {status === 'idle' && "Log In"}
                         {status === 'Loading' && <LineWobble size="120" stroke="10" bgOpacity='0.1' color='black' />}
-                        {status === 'success' && <AnimatedCheckmark />}
+                        {status === 'success' && <AnimatedCheckmark height={60} width={60} />}
                     </button>
                     
                     {error && (
