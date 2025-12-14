@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import '../css/Navbar.css'
 import { useRef, useState, type MouseEventHandler } from "react";
 import { AnimatedCheckmark } from "./AnimatedCheckMark";
-import { User2, X } from "lucide-react";
+import { HomeIcon, User2, X } from "lucide-react";
 import { useOnClickOutside } from "../contexts/OnClickOutside";
 
 type LogOutStatus = 'idle' | 'success';
@@ -30,12 +30,12 @@ export const Navbar = () =>{
         setLogOutStatus("success")
         setTimeout(()=>{
             setIsOpen(false)
-        }, 800)
+        }, 500)
         setTimeout(()=>{
             logout()
             navigate('/login')
             setLogOutStatus("idle")
-        },1200)
+        },1000)
 
     }
 
@@ -48,7 +48,7 @@ export const Navbar = () =>{
     return (
         <nav ref={dropdownRef}>
             
-            <Link className="home_link" to={'/home'}>Home</Link>
+            <Link className="home_link" to={'/home'}><HomeIcon /></Link>
             <div
                 onClick={() => setIsOpen(prev => !prev)} 
                 className={`user_link ${isOpen ? "user_link_expanded":""}`}>

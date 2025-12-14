@@ -1,6 +1,6 @@
 
 nav{
-    position: relative;
+    position: absolute;
     text-decoration: none;
     width: 100%;
     font-size: larger;
@@ -9,9 +9,28 @@ nav{
     justify-content: space-between;
 }
 
+nav>a{
+    position: relative;
+    top: 20px;
+    left: 20px;
+    color: var(--text-primary);
+    background-color: var(--bg-card);
+    padding: 8px 13px 8px 13px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-subtle);
+    transition: all 300ms ease-in ;
+
+}
+
+nav>a:hover, .user_link:hover{
+    cursor: pointer;
+    box-shadow: 0 0 30px rgba(173, 173, 173, 0.445);
+    color: var(--text-primary);
+}
+
 .user_link{
     position: relative;
-    top: 10px;
+    top: 20px;
     right: 20px;
     transition: all 300ms ease-in ;
     background-color: var(--bg-card);
@@ -31,24 +50,27 @@ nav{
 
 .user_link_div{
     position: absolute;
-    top: 8px;
-    right: 18px;
+    top: 17px;
+    right: 17px;
     max-height: 0px;
     background-color: var(--bg-card);
     border-radius: var(--radius-lg);
-    transition: all 200ms ease-in 200ms;
+    transition: all 200ms ease-in 100ms;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
     z-index: 1;
-
+    touch-action: none;
+    pointer-events: none;
 }
 
 .user_link_div_expanded{
     max-height: 300px; 
     opacity: 1;
     padding: 20px;
+    touch-action: auto;
+    pointer-events: auto;
 }
 
 .user_drop_down_btn, .user_drop_down_name{
@@ -68,11 +90,11 @@ nav{
 .user_link_div_expanded .user_drop_down_name {
     opacity: 1;
     transform: translateY(0);
-    transition-delay: 0.4s;
+    transition-delay: 0.3s;
 }
 
 .user_link_div_expanded .user_drop_down_btn {
     opacity: 1;
     transform: translateY(0);
-    transition-delay: 0.6s;
+    transition-delay: 0.4s;
 }
