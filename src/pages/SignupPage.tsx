@@ -1,5 +1,5 @@
 // src/pages/SignupPage.tsx
-import React, { useMemo, useState, type ChangeEvent, type FocusEvent } from 'react'; // Import useState 
+import React, { useEffect, useMemo, useState, type ChangeEvent, type FocusEvent } from 'react'; // Import useState 
 import { useAuth } from '../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { InputGroup } from '../components/InputGroup';
@@ -153,7 +153,6 @@ export const SignupPage = () => {
             }
             setStatus("success")
             console.log("Sign Up sucessfull")
-            navigate("/login");
         } catch (err : any) {
             console.error(err);
             setError(err.message);
@@ -161,9 +160,17 @@ export const SignupPage = () => {
         }
     };
 
+    useEffect(()=>{
+           if (status == "success"){
+            setTimeout(()=>{
+                navigate('/home')
+            },1000)
+           } 
+    },[status])
+
     return (
         <div className='signup_main_div'>
-        { token ?
+        { token && status =="idle" ?
             <>
                 <div>User Already Logged in</div>
                 <button onClick={logout}>Log Out!</button>
@@ -249,7 +256,7 @@ export const SignupPage = () => {
                 >
                     {status === 'idle' && "Create Account"}
                     {status === 'Loading' && <LineWobble />}
-                    {status === 'success' && <AnimatedCheckmark />}
+                    {status === 'success' && <AnimatedCheckmark height={60} width={60}/>}
                 </button>
                 
                 {error && (
