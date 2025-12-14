@@ -1,12 +1,17 @@
 import "../css/AnimatedCheckMark.css"
 
-export function AnimatedCheckmark(){
+interface Props {
+  height: number,
+  width: number
+}
+
+export function AnimatedCheckmark(props : Props){
     return (
     <div className="animated_check_mark">
       <div className="relative">
         <svg
-          width="50"
-          height="50"
+          width={props.width}
+          height={props.height}
           viewBox="0 0 100 100"
           className="checkmark-svg"
         >
