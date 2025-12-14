@@ -164,7 +164,7 @@ export const SignupPage = () => {
            if (status == "success"){
             setTimeout(()=>{
                 navigate('/home')
-            },1000)
+            },700)
            } 
     },[status])
 
