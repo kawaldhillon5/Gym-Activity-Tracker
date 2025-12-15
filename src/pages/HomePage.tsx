@@ -6,6 +6,8 @@ import Calendar from 'react-calendar';
 import { useNavigate } from 'react-router-dom';
 
 import '../css/HomePage.css'
+import { CalendarDays } from 'lucide-react';
+import { LineWobble } from 'ldrs/react';
 
 const url = import.meta.env.VITE_API_URL
 
@@ -23,12 +25,18 @@ interface WorkoutRead {
   exercise_logs: any[]; 
 }
 
+type CheckInStatus = 'idle' | 'Loading';
+
+
 export const HomePage = () => {
   const { token } = useAuth();
   const [checkIns, setCheckIns] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate()
 
+  const [CheckInStatus, setCheckInStatus] = useState<CheckInStatus>("idle")
+  const [loading, setLoading] = useState<boolean>(false);
+  
 
   const localDateString = (date: Date) => {
     const dateLocal  =  date.toLocaleDateString()
@@ -37,6 +45,13 @@ export const HomePage = () => {
   }
 
   const dateToday = localDateString(new Date());
+  const isCheckedInToday = checkIns.includes(dateToday);
+
+  const displayDate = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'short',
+    day: 'numeric'
+  }).toUpperCase()
 
   const handleClickDate = async (date: Date) =>{
     const dateString = localDateString(date)
@@ -46,7 +61,7 @@ export const HomePage = () => {
     }
     if(checkIns.includes(dateString)) {
       try {
-
+        setCheckInStatus("Loading")
         const response = await fetch(`${url}/workouts/checkin-info/${dateString}`,{
           method: "GET",
           headers:{
@@ -56,10 +71,11 @@ export const HomePage = () => {
         });
         if(!response.ok){
           const err = await response.json()
-          throw new Error( err.detail || "Something went wrong while Loading Workout Info!")
+          throw new Error( err.detail || "Error Loading Workout")
         }
         
         const workout : WorkoutRead = await response.json()
+        setCheckInStatus("idle")
         navigate(`/workout/${workout.id}`);
 
       }catch (err: any){
@@ -80,10 +96,11 @@ export const HomePage = () => {
     }
 
     if(checkIns.includes(dateToday)) {
-      setError("Already Checked in for Today")
-      return;
+      handleClickDate(new Date())
+      return
     }
     try{
+      setCheckInStatus("Loading")
       const response = await fetch(`${url}/checkins/`, {
         method: "POST",
         headers: {
@@ -93,7 +110,7 @@ export const HomePage = () => {
       });
       if(!response.ok){
         const err = await response.json()
-        throw new Error( err.detail || "Something went wrong while checking In!")
+        throw new Error( err.detail || "Check-in Failed")
       }
       const newCheckIn: CheckIn = await response.json();
       setCheckIns(prevCheckIns => [...prevCheckIns, newCheckIn.check_in_date]);
@@ -117,7 +134,7 @@ export const HomePage = () => {
         }
 
         const newWorkout: WorkoutRead = await workoutResponse.json();
-        console.log(`Navigating to /workout/${newWorkout.id}`);
+        setCheckInStatus("idle")
         navigate(`/workout/${newWorkout.id}`);
 
     } catch (err: any) { 
@@ -127,6 +144,7 @@ export const HomePage = () => {
   }
 
   const getTileClassName: TileClassNameFunc = ({ date, view }) => {
+    if(loading) return "loading"
     if (view === 'month') {
       const dateString = date.toISOString().split('T')[0];
       if (checkIns.includes(dateString)) {
@@ -137,9 +155,12 @@ export const HomePage = () => {
   };
 
 
+
+
   useEffect(() => {
     const fetchCheckIns = async () => {
       try {
+        setLoading(true)
         const response = await fetch(`${url}/checkins/`, {
           headers: {
             "Authorization": `Bearer ${token}`,
@@ -161,6 +182,9 @@ export const HomePage = () => {
         console.error(err);
         setError(err.message);
       }
+      finally{
+        setLoading(false)
+      }
     };
 
     if (token) {
@@ -172,18 +196,50 @@ export const HomePage = () => {
   
   return (
     <div id='home_page'>
-      <h1>Welcome to the Gym Tracker</h1>
+      
+      {/* 1. Heads Up Display */}
+      <div className="dashboard-header">
+        <p className="date-display">{displayDate}</p>
+        <h1 className={loading ? "welcome-text welcome-text-loading": "welcome-text"}>
+            {isCheckedInToday ? "SESSION ACTIVE" : "READY TO TRAIN?"}
+        </h1>
+      </div>
 
+      {/* 2. Hero Action Card */}
+      <div className={loading ? `action-card ${isCheckedInToday ? 'active' : ''} action-card-loading`: `action-card ${isCheckedInToday ? 'active' : ''}`}>
+        
+        
+        <div style={{ width: '100%' }}>
+            <h2 style={{ margin: 0, fontSize: '1.5rem' }}>
+                {isCheckedInToday ? "Current Session" : "Start New Session"}
+            </h2>
+            <p style={{ color: 'var(--text-secondary)', marginTop: '4px', fontSize: '0.9rem' }}>
+                {isCheckedInToday ? "Continue logging your sets." : "Log a new workout for today."}
+            </p>
+        </div>
+
+        <button 
+            onClick={handleCheckIn}
+            className="checkin-btn"
+        >
+            
+          {CheckInStatus === 'idle' ? isCheckedInToday ? "RESUME LOGGING" : "LOG WORKOUT" : <LineWobble /> }
+             
+        </button>
+      </div>
+
+      {/* 3. The Calendar */}
+      <h3 style={{ alignSelf: 'flex-start', fontSize: '1rem', color: 'var(--text-secondary)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <CalendarDays size={16} /> SESSION HISTORY
+      </h3>
+      
       <Calendar
         tileClassName={getTileClassName}
         onClickDay={(value) =>{handleClickDate(value)}} 
+        calendarType='iso8601' // Starts week on Monday
       />
-      <button 
-        onClick={handleCheckIn}
-        className={checkIns.includes(dateToday) ? 'greyed': ''}
-      >Check-in For Today</button>
       
-      {error && <p style={{color: 'red'}}>{error}</p>}
+      {error && <p className="error-msg">{error}</p>}
     </div>
   );
 };

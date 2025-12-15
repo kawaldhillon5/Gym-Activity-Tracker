@@ -1,17 +1,237 @@
-#home_page{
 
-    height: 90%;
-
+#home_page {
+    width: 100%;
     display: flex;
     flex-direction: column;
+    padding: 24px;
+    box-sizing: border-box;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    overflow-y: auto;
+}
+
+/* === 1. HEADS UP DISPLAY === */
+.dashboard-header {
+    margin-bottom: 32px;
+    margin-top: 20px;
+    text-align: left; /* Align left for pro look */
+    width: 100%;
+}
+
+.date-display {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.welcome-text {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+/* === 2. ACTION CARD (HERO) === */
+.action-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+.action-card.active {
+    border-color: var(--text-primary); /* Highlight active state */
+}
+
+.status-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--text-secondary);
+}
+
+.action-card.active .status-indicator {
+    background-color: #10b981; /* Emerald Green */
+    box-shadow: 0 0 10px #10b981;
+}
+
+.checkin-btn {
+    width: 100%;
+    background-color: var(--text-primary);
+    color: var(--bg-main);
+    font-weight: 700;
+    padding: 16px;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    margin-top: 16px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.checkin-btn:active {
+    transform: scale(0.98);
+}
+
+.checkin-btn.disabled {
+    background-color: var(--bg-highlight);
+    color: var(--text-secondary);
+    cursor: default;
+}
+
+/* === 3. DARK MODE CALENDAR OVERRIDES === */
+/* Wrapper to force dark theme */
+.react-calendar {
+    width: 100% !important;
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-lg) !important;
+    font-family: inherit !important;
+    line-height: 1.5em !important;
+    padding: 16px;
+}
+
+/* Navigation (Month/Year) */
+.react-calendar__navigation button {
+    color: var(--text-primary) !important;
+    min-width: 44px;
+    background: none;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+    background-color: var(--bg-highlight) !important;
+    border-radius: 8px;
+}
+
+/* Days of Week */
+.react-calendar__month-view__weekdays {
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-decoration: none !important;
+}
+
+/* The Day Tiles */
+.react-calendar__tile {
+    color: var(--text-primary);
+    background: none;
+    text-align: center;
+    line-height: 16px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    height: 48px; /* Taller hit targets */
+    display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.highlight {
-    background: #d0f0c0; /* A light green */
-    font-weight: bold;
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+    background-color: var(--bg-highlight);
 }
-.greyed {
-    color: grey;
+
+/* "Today" Highlight */
+.react-calendar__tile--now {
+    background: var(--bg-highlight) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--text-secondary);
+}
+
+/* "Checked In" Highlight (Green Dot concept) */
+.react-calendar__tile.highlight {
+    background-color: rgba(16, 185, 129, 0.2) !important; /* Low opacity green */
+    color: #10b981 !important;
+    font-weight: 700;
+    border: 1px solid rgba(16, 185, 129, 0.5);
+}
+
+/* Error Text */
+.error-msg {
+    color: var(--error);
+    margin-top: 16px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+
+@keyframes skeleton-wave {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* 2. The Shared Shimmer Style 
+   This applies to any element currently in a 'loading' state */
+.welcome-text-loading,
+.action-card-loading,
+.react-calendar__tile.loading {
+    /* The "Wave": Base Color -> Highlight -> Base Color */
+    background: linear-gradient(
+        90deg, 
+        var(--bg-card) 25%, 
+        var(--bg-highlight) 50%, 
+        var(--bg-card) 75%
+    ) !important;
+    
+    background-size: 200% 100% !important;
+    animation: skeleton-wave 1.5s infinite linear !important;
+    
+    /* Interaction Locks */
+    color: transparent !important; /* Hide text */
+    pointer-events: none !important; /* Prevent clicks */
+    border-color: transparent !important; /* Hide borders */
+    user-select: none;
+}
+
+/* === Specific Component Tweaks === */
+
+/* A. Welcome Text Skeleton */
+.welcome-text-loading {
+    border-radius: 8px;
+}
+
+/* B. Action Card Skeleton */
+/* We need to hide the children (buttons, text) so they don't float on top */
+.action-card-loading > * {
+    opacity: 0; 
+    visibility: hidden;
+}
+
+/* C. Calendar Tile Skeleton */
+/* Make them look like little data blocks */
+.react-calendar__tile.loading {
+    border-radius: 6px !important;
+    transform: scale(0.85); /* Adds gap between the blocks */
+}
+
+/* Hide the numbers inside the tiles */
+.react-calendar__tile.loading abbr {
+    display: none;
 }
