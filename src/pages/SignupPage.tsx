@@ -191,7 +191,7 @@ export const SignupPage = () => {
                     icon={<User size={20} />}
                     type="text" 
                     name="name" 
-                    placeholder="Full Name" 
+                    placeholder="User Name" 
                     value={formData.name}
                     onChange={handleChange}
                     onBlur={handleBlur}

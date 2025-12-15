@@ -124,7 +124,7 @@ export const LoginPage = () => {
                         icon={<User size={20} />}
                         type="text" 
                         name="username" 
-                        placeholder="Full Name" 
+                        placeholder="User Name" 
                         value={formData.username}
                         onChange={handleChange}
                         onBlur={handleBlur}
