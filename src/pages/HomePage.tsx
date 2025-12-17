@@ -53,6 +53,13 @@ export const HomePage = () => {
     day: 'numeric'
   }).toUpperCase()
 
+  const getPreviousCheckInDate = (): string | null => {
+    const history = checkIns.filter(date => date !== dateToday);
+    history.sort((a, b) => b.localeCompare(a));
+
+    return history.length > 0 ? history[0] : null;
+  };
+
   const handleClickDate = async (date: Date) =>{
     const dateString = localDateString(date)
         if (!token) {
@@ -76,11 +83,13 @@ export const HomePage = () => {
         
         const workout : WorkoutRead = await response.json()
         setCheckInStatus("idle")
-        navigate(`/workout/${workout.id}`);
+        const lastDate = getPreviousCheckInDate();
+        navigate(`/workout/${workout.id}`,{state:{lastCheckInDate:lastDate}});
 
       }catch (err: any){
         console.error(err)
         setError(err.message)
+        setCheckInStatus("idle")
       }
       
     } else {
@@ -134,12 +143,15 @@ export const HomePage = () => {
         }
 
         const newWorkout: WorkoutRead = await workoutResponse.json();
-        setCheckInStatus("idle")
-        navigate(`/workout/${newWorkout.id}`);
+        const lastDate = getPreviousCheckInDate();
+        navigate(`/workout/${newWorkout.id}`,{state:{lastCheckInDate:lastDate}});
 
     } catch (err: any) { 
       console.error(err)
       setError(err.message)
+    } finally{
+      setCheckInStatus("idle")
+
     }
   }
 
