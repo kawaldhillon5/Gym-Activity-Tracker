@@ -84,7 +84,7 @@ export const HomePage = () => {
         const workout : WorkoutRead = await response.json()
         setCheckInStatus("idle")
         const lastDate = getPreviousCheckInDate();
-        navigate(`/workout/${workout.id}`,{state:{lastCheckInDate:lastDate}});
+        navigate(`/workout/${workout.id}`,{state:{lastCheckInDate:lastDate, checkInDate: dateString}});
 
       }catch (err: any){
         console.error(err)
