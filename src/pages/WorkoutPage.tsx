@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { AddSetLogForm } from '../components/AddSetLog';
 
 import '../css/workout_page.css'
+import { Exercise } from '../components/Exercise';
+import { AddExercise } from '../components/AddExercise';
+import { Pencil, Save } from 'lucide-react';
 
 const url = import.meta.env.VITE_API_URL
 
@@ -34,12 +36,14 @@ interface Workout {
 export const WorkoutPage = () => {
   const { workoutId } = useParams<{ workoutId: string }>();
   const { token } = useAuth();
+  const location = useLocation();
 
   const [workout, setWorkout] = useState<Workout | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const [exerciseNameInput, setExerciseNameInput] = useState <string >("");
+  const [editOn, setEditOn] = useState<boolean>(false)
 
   const handelAddExercise = async (e : React.FormEvent) =>{
     e.preventDefault();
@@ -160,13 +164,13 @@ export const WorkoutPage = () => {
   }
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>{workout.name}</h1>
-      <p>Workout ID: {workout.id} (Linked to Check-in ID: {workout.check_in_id})</p>
+    <div className='workout_div' >
+      <div className='workout_div_header'>
+        <h2>{workout.name}</h2>
+        <button onClick={()=>{setEditOn((prev)=> !prev)}}>{editOn ? <Save/> :<Pencil/>}</button>
+      </div>
       
-      <hr />
-
-      <form id='add_exercise_form' onSubmit={handelAddExercise} style={{ marginBottom: '20px' }}>
+      {/* <form id='add_exercise_form' onSubmit={handelAddExercise} style={{ marginBottom: '20px' }}>
         <h3>Add New Exercise</h3>
         <input 
           type="text"
@@ -175,42 +179,21 @@ export const WorkoutPage = () => {
           placeholder="e.g., Bench Press"
         />
         <button type="submit">Add Exercise</button>
-      </form>
+      </form> */}
+      {/* <AddExercise /> */}
+
 
       <div className='exercise_component' style={{ marginTop: '20px' }}>
+        <div className='exercise_div_header'>
+          <h3>Exercises</h3>
+          {editOn && <AddExercise /> }
+        </div>
         {workout.exercise_logs.length === 0 ? (
           <p>You haven't added any exercises to this workout yet.</p>
         ) : (
           // First map: Loop over the Exercises
           workout.exercise_logs.map(exercise => (
-            <div className='set_item' key={exercise.id} style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '10px', marginBottom: '15px' }}>
-              <h2>{exercise.exercise_name}</h2>
-              <AddSetLogForm setNum = {exercise.set_logs.length + 1} exerciseLogId = {exercise.id} onSetAdded={(newSet) => handleSetAdded(newSet, exercise.id)} />              
-              {exercise.set_logs.length === 0 ? (
-                <p>No sets logged for this exercise.</p>
-              ) : (
-                <table id='set_table' style={{ width: '100%', marginTop: '10px' }}>
-                  <thead>
-                    <tr>
-                      <th >Set</th>
-                      <th >Weight (kg)</th>
-                      <th >Reps</th>
-                      <th >Comment</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {exercise.set_logs.map(set => (
-                      <tr key={set.id}>
-                        <td>{set.set_number}</td>
-                        <td>{set.weight_kg}</td>
-                        <td>{set.reps}</td>
-                        <td>{set.comment || 'N/A'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
+            <Exercise exercise={exercise} loading={loading} handleSetAdded={handleSetAdded}/>
           ))
         )}
       </div>

@@ -66,9 +66,6 @@ export const AddSetLogForm = (props: AddSetLogFormProps) =>{
         } catch (err: any) {
             setError(err.message);
         }
-
-        
-        console.log(props.exerciseLogId)
     }
 
 
