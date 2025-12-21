@@ -1,3 +1,27 @@
+.workout_div{
+    padding: 20px;
+    height: 100%;
+    margin-top: 15%;
+}
+
+.workout_div_header{
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 2.5fr 0.5fr;
+    justify-items: start;
+    align-items: center;
+}
+
+.exercise_div_header{
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 2.5fr 0.5fr;
+    justify-items: start;
+    align-items: center;
+}
+
+
+
 #add_exercise_form>input{
     border: 0.5px, solid, black;
     border-radius: 5px;

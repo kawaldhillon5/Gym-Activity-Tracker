@@ -1,0 +1,77 @@
+.add_exercise_div{
+    position: relative;
+}
+
+.add_exercise_btn{
+    position: relative;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    color: var(--text-primary);
+
+}
+
+
+.add_exercise_btn_open{
+    box-shadow: 0 0 30px rgba(173, 173, 173, 0.445);
+    z-index: 2;
+}
+
+.add_exercise_item{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background-color: var(white);
+    border-radius: var(--radius-lg);
+    opacity: 0;
+
+    transform: translateY(-10px);
+    transition: 
+        opacity 0.5s ease, 
+        transform 0.3s ease,
+        background-color 0.2s,
+        border-color 0.2s;
+}
+
+.add_exercise_modal{
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    max-height: 0px;
+    background-color: var(--bg-card);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    z-index: 1;
+    overflow: hidden;
+    /* opacity: 0; */
+    touch-action: none;
+    pointer-events: none;
+    transition: 
+        width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.3s ease,
+        padding 0.3s ease,
+        border 0.3s ease;
+}
+
+.add_exercise_modal_expanded{
+    max-height: 400px; 
+    height: 300px;
+    padding: 20px;
+    touch-action: auto;
+    pointer-events: auto;
+
+    overflow-y: auto;
+}
+
+
+.add_exercise_modal_expanded .add_exercise_item{
+    opacity: 1;
+    transform: translateY(0);
+    /* transition: opacity 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); */
+    transition-delay: 0;
+}
+
