@@ -14,13 +14,13 @@ export function BenchPressIcon({size}:{size:number}){
     <circle cx="25" cy="61" r="7" fill="#d3d3d3ff"/>
 
     {/* Legs */}
-    <path d="M 58 63 L 72 63 L 72 82" stroke="#d3d3d3ff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 58 63 L 72 63 L 72 82" stroke="#d3d3d3ff" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round"/>
 
     {/* Foot */}
     <rect x="67" y="80" width="15" height="7" rx="2" fill="#d3d3d3ff"/> 
 
     {/* Arms */}
-    <path d="M 40 63 L 40 45" stroke="#d3d3d3ff" stroke-width="10" stroke-linecap="round"/>
+    <path d="M 40 63 L 40 45" stroke="#d3d3d3ff" strokeWidth="10" strokeLinecap="round"/>
 
     {/* Bar Bell */}
     <circle cx="40" cy="40" r="8" fill="#7a7a7aff"/>
