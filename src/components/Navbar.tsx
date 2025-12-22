@@ -5,6 +5,7 @@ import { useRef, useState, type MouseEventHandler } from "react";
 import { AnimatedCheckmark } from "./AnimatedCheckMark";
 import { HomeIcon, User2, X } from "lucide-react";
 import { useOnClickOutside } from "../contexts/OnClickOutside";
+import MorphUser from "./MorphyingUserIcon";
 
 type LogOutStatus = 'idle' | 'success';
 
@@ -52,7 +53,7 @@ export const Navbar = () =>{
             <div
                 onClick={() => setIsOpen(prev => !prev)} 
                 className={`user_link ${isOpen ? "user_link_expanded":""}`}>
-                {isOpen ? <X />:<User2 />}
+                <MorphUser isUser={!isOpen} />
             </div>
             <UserLink user={user} logOutstatus={LogOutStatus}  isExpanded = {isOpen} handleLogout={handleLogout}/>
 

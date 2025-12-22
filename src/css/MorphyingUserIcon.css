@@ -1,0 +1,51 @@
+
+
+/* Morphing icon styles */
+.morph-icon {
+    transition: transform 0.3s ease;
+}
+
+.morph-head,
+.morph-body {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+}
+
+/* User mode - visible user icon */
+.morph-head.user-mode {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+}
+
+.morph-body.user-mode {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+}
+
+/* X mode - hide user icon parts */
+.morph-head.x-mode {
+    opacity: 0;
+    transform: scale(0) rotate(180deg);
+}
+
+.morph-body.x-mode {
+    opacity: 0;
+    transform: scale(0) rotate(-180deg);
+}
+
+/* X lines */
+.x-line-1,
+.x-line-2 {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+}
+
+.hidden-line {
+    opacity: 0;
+    transform: scale(0) rotate(-90deg);
+}
+
+.visible-line {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+}
