@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import '../css/Navbar.css'
 import { useRef, useState, type MouseEventHandler } from "react";
 import { AnimatedCheckmark } from "./AnimatedCheckMark";
-import { HomeIcon, User2, X } from "lucide-react";
+import { HomeIcon, User2 } from "lucide-react";
 import { useOnClickOutside } from "../contexts/OnClickOutside";
 import MorphUser from "./MorphyingUserIcon";
 
