@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 const url = import.meta.env.VITE_API_URL
 
 interface SetLog {
-  id: number;
+  id: number | null;
   set_number: number;
   reps: number;
   weight_kg: number;
@@ -12,8 +12,9 @@ interface SetLog {
 }
 
 interface AddSetLogFormProps {
-  exerciseLogId: number;
+  exerciseLogId: number | null;
   setNum: number;
+  local:boolean
   onSetAdded: (newSet: SetLog) => void; 
 }
 
@@ -34,37 +35,54 @@ export const AddSetLogForm = (props: AddSetLogFormProps) =>{
     const handleAddSet = async (e : React.FormEvent) =>{
         e.preventDefault()
         setError(null)
-        try {
-            const addSetResponse  = await fetch(`${url}/workouts/set-logs/`,
-            {
-                method: "POST",
-                headers:{
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    exercise_log_id: props.exerciseLogId,
-                    set_number: props.setNum,
-                    reps: newSetReps,
-                    weight_kg: newSetWeights,
-                    comment: newSetComments,
-                })
-            });
+        if(props.local == false){
+            try {
+                const addSetResponse  = await fetch(`${url}/workouts/set-logs/`,
+                {
+                    method: "POST",
+                    headers:{
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        exercise_log_id: props.exerciseLogId,
+                        set_number: props.setNum,
+                        reps: newSetReps,
+                        weight_kg: newSetWeights,
+                        comment: newSetComments,
+                    })
+                });
 
-            if(!addSetResponse.ok){
-            const err = await addSetResponse.json();
-            throw new Error(err.detail || "Error Occured While Trying to create Set Log.");
+                if(!addSetResponse.ok){
+                const err = await addSetResponse.json();
+                throw new Error(err.detail || "Error Occured While Trying to create Set Log.");
+                }
+
+                const newSetLog: SetLog = await addSetResponse.json();
+                props.onSetAdded(newSetLog);
+
+                changeActiveState()
+                setNewSetReps(0)
+                setNewSetWeights(0)
+                setNewSetComments("")
+            } catch (err: any) {
+                setError(err.message);
+            }
+        } else {
+            const newSetLog: SetLog = {
+                id: props.setNum,
+                set_number: props.setNum,
+                reps: newSetReps,
+                weight_kg: newSetWeights,
+                comment: newSetComments
             }
 
-            const newSetLog: SetLog = await addSetResponse.json();
             props.onSetAdded(newSetLog);
 
-            changeActiveState()
-            setNewSetReps(0)
-            setNewSetWeights(0)
-            setNewSetComments("")
-        } catch (err: any) {
-            setError(err.message);
+                changeActiveState()
+                setNewSetReps(0)
+                setNewSetWeights(0)
+                setNewSetComments("")
         }
     }
 

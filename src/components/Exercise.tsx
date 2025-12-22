@@ -1,7 +1,7 @@
 import { AddSetLogForm } from "./AddSetLog";
 
 interface SetLog {
-  id: number;
+  id: number | null;
   set_number: number;
   reps: number;
   weight_kg: number;
@@ -9,17 +9,18 @@ interface SetLog {
 }
 
 interface ExerciseLog {
-  id: number;
+  id: number | null;
   exercise_name: string;
   set_logs: SetLog[];
 }
 
-export const Exercise = ({exercise, loading, handleSetAdded}:{exercise:ExerciseLog, loading:boolean, handleSetAdded: (newSet:SetLog, id:number)=>void}) =>{
+
+export const Exercise = ({exercise, loading, handleSetAdded}:{exercise:ExerciseLog ,loading:boolean, handleSetAdded: (newSet:SetLog, id:number | null, name:string)=>void}) =>{
 
     return(
         <div className={loading ? "exercise_component_loading set_item" : "exercise_component set_item"} key={exercise.id} style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '10px', marginBottom: '15px' }}>
             <h2>{exercise.exercise_name}</h2>
-                <AddSetLogForm setNum = {exercise.set_logs.length + 1} exerciseLogId = {exercise.id} onSetAdded={(newSet) => handleSetAdded(newSet, exercise.id)} />              
+                <AddSetLogForm setNum = {exercise.set_logs.length + 1} exerciseLogId = {exercise.id} onSetAdded={(newSet) => handleSetAdded(newSet, exercise.id, exercise.exercise_name)} />              
                 {exercise.set_logs.length === 0 ? (
                 <p>No sets logged for this exercise.</p>
                 ) : (
