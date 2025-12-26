@@ -79,12 +79,39 @@
     transition-delay: 0ms !important;
 }
 
-.lucide-x{
+/* .lucide-x{
     transition: transform 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    transform: rotate(135deg);
+} */
+
+.add-btn-inactive{
+    animation: scale-ani-reverse linear 250ms forwards;
 }
 
 .add-btn-active{
-    transform: rotate(0deg);
+    animation: scale-ani linear 250ms forwards;
 }
+
+@keyframes scale-ani {
+    0%{transform: scale(1) rotate(135deg)}
+    10%{transform: scale(1.2) rotate(115deg)}
+    20%{transform: scale(1) rotate(90deg)}
+    40%{transform: scale(0.6) rotate(35deg)}
+    60%{transform: scale(0.6) rotate(10deg)}
+    70%{transform: scale(1) rotate(0deg)}
+    80%{transform: scale(1.1) rotate(-25deg)}
+    100%{transform: scale(1) rotate(0deg)}
+}
+
+@keyframes scale-ani-reverse {
+
+    0%{transform: scale(1) rotate(0deg)}
+    10%{transform: scale(1.2) rotate(20deg)}
+    20%{transform: scale(1) rotate(35deg)}
+    40%{transform: scale(0.6) rotate(90deg)}
+    60%{transform: scale(0.6) rotate(120deg)}
+    70%{transform: scale(1) rotate(135deg)}
+    80%{transform: scale(1.1) rotate(155deg)}
+    100%{transform: scale(1) rotate(135deg)}
+}
+
 
