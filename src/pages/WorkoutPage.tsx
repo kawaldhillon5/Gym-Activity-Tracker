@@ -11,6 +11,9 @@ import { ExeciseNames } from '../assets/data/Exercises';
 const url = import.meta.env.VITE_API_URL
 
 
+
+
+
 interface SetLog {
   id: number | null;
   set_number: number;
@@ -43,40 +46,85 @@ export const WorkoutPage = () => {
 
   const [workout, setWorkout] = useState<Workout | null>(null);
   const [unsavedExercises, setUnsavedExercises] = useState<ExerciseLog[]>([])
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
   const [localExerciseLogCount, setLocalExerciseLogCount] = useState<number>(1)
   const [exerciseNamesForAddList, setExerciseNamesForAddList] =  useState<string[]>([])
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [editStatus, setEditStatus] = useState<EditButtonStatus>("Off")
 
-  const handleSaveSets = async (sets: SetLog[], exerciseLogId:number| null)=>{
+  const handleSaveSets = async (sets: SetLog[], exerciseLogId: number | null) => {
+    const results = await Promise.allSettled(sets.map(async (set) => {
+        const addSetResponse = await fetch(`${url}/workouts/set-logs/`, {
+            method: "POST",
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                exercise_log_id: exerciseLogId,
+                set_number: set.set_number,
+                reps: set.reps,
+                weight_kg: set.weight_kg,
+                comment: set.comment,
+            })
+        });
 
-    return Promise.all(sets.map(async set => {
-      const addSetResponse  = await fetch(`${url}/workouts/set-logs/`,
-                {
-                    method: "POST",
-                    headers:{
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        exercise_log_id: exerciseLogId,
-                        set_number: set.set_number,
-                        reps: set.reps,
-                        weight_kg: set.weight_kg,
-                        comment: set.comment,
-                    })
-                });
+        if (!addSetResponse.ok) {
+            const err = await addSetResponse.json();
+            throw new Error(err.detail || `Set ${set.set_number} failed`);
+        }
 
-                if(!addSetResponse.ok){
-                const err = await addSetResponse.json();
-                throw new Error(err.detail || "Error Occured While Trying to create Set Log.");
-                }
+        return await addSetResponse.json();
+    }));
 
-                const newSetLog: SetLog = await addSetResponse.json();
-                return newSetLog
-    }))
+    // 2. Separate the results
+    const successfulSets: SetLog[] = [];
+    const failedSets: string[] = []; 
+    results.forEach((result, index) => {
+        if (result.status === 'fulfilled') {
+            successfulSets.push(result.value);
+        } else {
+            console.error(`Failed to save set ${sets[index].set_number}:`, result.reason);
+            failedSets.push(`Set ${sets[index].set_number}`);
+        }
+    });
+
+    return { successfulSets, failedSets };
+}
+
+  const handleRemoveExercisesPerma = async (name:string, id:number)=>{
+    setError("")
+    try{
+      const response = await fetch(`${url}/workouts/exercise-logs/${id}`,{
+        method:"DELETE",
+        headers:{
+          'Authorization': `Bearer ${token}`,
+        }
+      });
+
+      if(!response.ok){
+        const err = await response.json();
+        throw new Error(err.detail || "Delete Exercise Failed")
+      }
+
+      setTimeout(()=>{setWorkout(prevWorkout => {
+        if (!prevWorkout) return null; 
+
+        return {
+          ...prevWorkout,
+          exercise_logs: prevWorkout.exercise_logs.filter(exercise => exercise.id !== id)
+          };
+      })}, 300);
+
+    } catch (err: any){
+      console.log(err)
+      setError(err.message)
+    }
+    finally{
+      return error ? false: true 
+    }
   }
 
   const handleSaveExercises = async () =>{
@@ -87,6 +135,7 @@ export const WorkoutPage = () => {
     }
     setError(null);
 
+    let totalFailedSets: string[] = [];
     let remainingExercises = [...unsavedExercises];
 
     try {
@@ -113,13 +162,18 @@ export const WorkoutPage = () => {
 
         const newExerciseLog : ExerciseLog = await addExerciseResponse.json();
         // loop through exercises sets and send post requests
-        newExerciseLog.set_logs = await handleSaveSets(exercise.set_logs, newExerciseLog.id)
+        const { successfulSets, failedSets } = await handleSaveSets(exercise.set_logs, newExerciseLog.id);
 
-        // remove exercise from unsaved exercise array if sucessfully saved
+            newExerciseLog.set_logs = successfulSets;
 
-        remainingExercises = remainingExercises.filter(ex => ex != exercise)
-        setUnsavedExercises(remainingExercises)
+            // Track failures
+            if (failedSets.length > 0) {
+                totalFailedSets.push(`${exercise.exercise_name}: [${failedSets.join(', ')}]`);
+            }
 
+            // 3. Update State
+            remainingExercises = remainingExercises.filter(ex => ex !== exercise);
+            setUnsavedExercises(remainingExercises);
         //updated workout state
 
         setWorkout(prevWorkout => {
@@ -129,6 +183,11 @@ export const WorkoutPage = () => {
             exercise_logs: [...prevWorkout.exercise_logs, newExerciseLog]
             };
         });
+
+        if (totalFailedSets.length > 0) {
+            setError(`Saved with errors. Failed to save some sets: ${totalFailedSets.join(' | ')}`);
+        }
+
       };
     } 
     catch (err: any) {
@@ -147,8 +206,9 @@ export const WorkoutPage = () => {
     setLocalExerciseLogCount(prev => prev + 1)  
   }
 
-  const handleRemoveExercise = (exerciseName:string) =>{
+  const handleRemoveExercise = (exerciseName:string ,id:number) =>{
     setUnsavedExercises(prevLogs => prevLogs.filter(exercise => exercise.exercise_name !== exerciseName));
+    return true
   }
 
     const handleSetAdded = (newSet: SetLog, exerciseId: number) => {
@@ -201,8 +261,9 @@ export const WorkoutPage = () => {
 
     useEffect(()=>{
       if(workout){
-        const existingExerciseNames = workout.exercise_logs.map(log => log.exercise_name); 
-        setExerciseNamesForAddList(ExeciseNames.filter(exercise=> !existingExerciseNames.includes(exercise)))
+        const existingExerciseNames = workout.exercise_logs.map(log => log.exercise_name);
+        const filteredExerciseNames =  ExeciseNames.filter(exercise=> !existingExerciseNames.includes(exercise))
+        setExerciseNamesForAddList(filteredExerciseNames)
       }
     },[workout?.exercise_logs])
   
@@ -245,12 +306,10 @@ export const WorkoutPage = () => {
     fetchWorkout();
   }, [token, workoutId]); 
 
+  const selectedExeriseName = [...unsavedExercises.map(e => e.exercise_name)]
+
   if (loading) {
     return <div>Loading your workout...</div>;
-  }
-
-  if (error) {
-    return <div style={{ color: 'red' }}>Error: {error}</div>;
   }
 
   if (!workout) {
@@ -266,7 +325,7 @@ export const WorkoutPage = () => {
       <div className='exercise_component_div' style={{ marginTop: '20px' }}>
         <div className='exercise_div_header'>
           <h3>Exercises</h3>
-          {editStatus === "On" && <AddExercise exerciseNames={exerciseNamesForAddList} onSelected={handelAddExercise} onUnSelected={handleRemoveExercise}/> }
+          {editStatus === "On" && <AddExercise selectedExerciseNames={selectedExeriseName} exerciseNames={exerciseNamesForAddList} onSelected={handelAddExercise} onUnSelected={handleRemoveExercise}/> }
         </div>
         {workout.exercise_logs.length === 0 ? (
           <p>You haven't added any exercises to this workout yet.</p>
@@ -275,7 +334,7 @@ export const WorkoutPage = () => {
           <div className='saved_exercises_div'>
           {
             workout.exercise_logs.map(exercise => (
-            <Exercise key={exercise.id} exercise={exercise} loading={loading} handleSetAdded={handleSetAdded} local={false}/>
+            <Exercise key={exercise.id} editStatus={editStatus} exercise={exercise} loading={loading} handleRemove={handleRemoveExercisesPerma} handleSetAdded={handleSetAdded} local={false}/>
           ))
           }  
           </div>
@@ -284,12 +343,12 @@ export const WorkoutPage = () => {
         <div className='unsaved_exercises_div'>
             {
               unsavedExercises.map(exercise => (
-              <Exercise key={exercise.exercise_name} exercise={exercise} loading={loading} handleSetAdded={handleLocalSetAdded} local={true}/>
+              <Exercise key={exercise.exercise_name} editStatus={editStatus} exercise={exercise} loading={loading} handleRemove={handleRemoveExercise} handleSetAdded={handleLocalSetAdded} local={true}/>
               ))
             }
         </div>
       </div>
-      
+      {error && <div style={{ color: 'red' }}>Error: {error}</div>}
     </div>
   );
 };
