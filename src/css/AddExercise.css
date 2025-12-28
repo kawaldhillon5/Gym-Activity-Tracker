@@ -84,33 +84,33 @@
 } */
 
 .add-btn-inactive{
-    animation: scale-ani-reverse linear 250ms forwards;
+    animation: scale-ani-reverse linear 300ms forwards;
 }
 
 .add-btn-active{
-    animation: scale-ani linear 250ms forwards;
+    animation: scale-ani linear 300ms forwards;
 }
 
 @keyframes scale-ani {
     0%{transform: scale(1) rotate(135deg)}
-    10%{transform: scale(1.2) rotate(115deg)}
-    20%{transform: scale(1) rotate(90deg)}
+    10%{transform: scale(1.1) rotate(115deg)}
+    20%{transform: scale(0.8) rotate(90deg)}
     40%{transform: scale(0.6) rotate(35deg)}
     60%{transform: scale(0.6) rotate(10deg)}
-    70%{transform: scale(1) rotate(0deg)}
-    80%{transform: scale(1.1) rotate(-25deg)}
+    70%{transform: scale(0.8) rotate(0deg)}
+    80%{transform: scale(1.1) rotate(-10deg)}
     100%{transform: scale(1) rotate(0deg)}
 }
 
 @keyframes scale-ani-reverse {
 
     0%{transform: scale(1) rotate(0deg)}
-    10%{transform: scale(1.2) rotate(20deg)}
-    20%{transform: scale(1) rotate(35deg)}
+    10%{transform: scale(1.1) rotate(20deg)}
+    20%{transform: scale(0.8) rotate(35deg)}
     40%{transform: scale(0.6) rotate(90deg)}
     60%{transform: scale(0.6) rotate(120deg)}
-    70%{transform: scale(1) rotate(135deg)}
-    80%{transform: scale(1.1) rotate(155deg)}
+    70%{transform: scale(0.8) rotate(135deg)}
+    80%{transform: scale(1.1) rotate(145deg)}
     100%{transform: scale(1) rotate(135deg)}
 }
 
