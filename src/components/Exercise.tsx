@@ -25,7 +25,7 @@ type EditButtonStatus = "On"|"Off"|"Saving"
 type RemoveButtonStatus = "Idle"|"Sucess"|"Error"
 
 
-export const Exercise = ({exercise, editStatus, loading, handleSetAdded, local, handleRemove}:{exercise:ExerciseLog ,loading:boolean, local:boolean ,editStatus: EditButtonStatus ,handleSetAdded: (newSet:SetLog, id:number)=>void, handleRemove: (name:string, id:number)=>Promise<boolean> | boolean}) =>{
+export const Exercise = ({exercise, editStatus, loading, handleSetAdded, local, handleRemove, handleSetRemove}:{exercise:ExerciseLog ,loading:boolean, local:boolean ,editStatus: EditButtonStatus ,handleSetAdded: (newSet:SetLog, id:number)=>void, handleRemove: (name:string, id:number)=>Promise<boolean> | boolean, handleSetRemove:(index:null|number, exerciseId:number,local:boolean)=>Promise<boolean>}) =>{
 
     const [modalState, setModalState] = useState<boolean>(false)
     const [removeLoading, setRemoveLoading] = useState<boolean>(false)
@@ -36,7 +36,6 @@ export const Exercise = ({exercise, editStatus, loading, handleSetAdded, local, 
         if(!local) {setRemoveLoading(true)}
         setTimeout(async ()=>{
             const res = await handleRemove(exercise.exercise_name,exercise.id)
-            console.log(res)
             if(res === true){                                                         
                 setRemoveLoading(false)
                 setRemoveError("Sucess")
@@ -79,8 +78,8 @@ export const Exercise = ({exercise, editStatus, loading, handleSetAdded, local, 
                     <div >Weight (kg)</div>
                 </div>
                 <div className="set-table-body">
-                {exercise.set_logs.map(set => (
-                    <TableRow key={set.set_number} set={set} editStatus={editStatus}/>
+                {exercise.set_logs.map((set, index) => (
+                    <TableRow exerciseId={exercise.id} local={local} handleSetRemove={handleSetRemove} key={index} index={index} set={set} editStatus={editStatus}/>
                 ))}
                 </div>
             </div>

@@ -49,12 +49,16 @@
     margin-top: 1px;
 }
 
-.set-table-remove-button-active{}
+
 
 .set-table-remove-button{
-    /* background-color: var(--bg-card); */
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-full);
+}
+
+.set-table-remove-button.remove-btn-sucess{
+    background-color: rgba(0, 128, 0, 0.322);
+    border: 1px solid green;
 }
 
 

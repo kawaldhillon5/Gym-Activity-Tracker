@@ -234,6 +234,79 @@ export const WorkoutPage = () => {
         });
     };
 
+  const handleSetRemove = async (index:null|number, exericseId:number, local:boolean) =>{
+
+      if(index === null) index = 0
+
+      if(local){
+        setUnsavedExercises(prevExercises =>{
+          const updatedExerciseLogs = prevExercises.map(exercise => {
+            
+            if (exercise.id !== exericseId) {
+            return exercise;
+            }
+
+            return {
+            ...exercise, 
+            set_logs: exercise.set_logs.filter((log, i)=>{ 
+                if(i !==index){
+                  return log
+                }
+              }) 
+            };
+          });
+        
+          return updatedExerciseLogs;
+        })
+        return true
+      }else {
+
+        setError("")
+        try{
+          const response = await fetch(`${url}/workouts/set-logs/${index}`,{
+            method:"DELETE",
+            headers:{
+              'Authorization': `Bearer ${token}`,
+            }
+          });
+
+          if(!response.ok){
+            const err = await response.json();
+            throw new Error(err.detail || "Delete Set Failed")
+          }
+
+          setTimeout(()=>{setWorkout(prevWorkout => {
+            if (!prevWorkout) return null; 
+
+              const updatedExerciseLogs = prevWorkout.exercise_logs.map(exercise => {
+              
+              if (exercise.id !== exericseId) {
+              return exercise;
+              }
+
+              return {
+              ...exercise, 
+              set_logs: exercise.set_logs.filter(log=> log.id !== index) 
+              };
+            });
+
+            return {
+              ...prevWorkout,
+              exercise_logs: updatedExerciseLogs
+              };
+          })}, 300);
+
+        } catch (err: any){
+          console.log(err)
+          setError(err.message)
+        }
+        finally{
+          return error ? false: true 
+        }
+      } 
+    }
+    
+
     const handleLocalSetAdded = (newSet: SetLog, id:number)=>{
       setUnsavedExercises(prevExercises=>{
 
@@ -334,7 +407,7 @@ export const WorkoutPage = () => {
           <div className='saved_exercises_div'>
           {
             workout.exercise_logs.map(exercise => (
-            <Exercise key={exercise.id} editStatus={editStatus} exercise={exercise} loading={loading} handleRemove={handleRemoveExercisesPerma} handleSetAdded={handleSetAdded} local={false}/>
+            <Exercise handleSetRemove={handleSetRemove} key={exercise.id} editStatus={editStatus} exercise={exercise} loading={loading} handleRemove={handleRemoveExercisesPerma} handleSetAdded={handleSetAdded} local={false}/>
           ))
           }  
           </div>
@@ -343,7 +416,7 @@ export const WorkoutPage = () => {
         <div className='unsaved_exercises_div'>
             {
               unsavedExercises.map(exercise => (
-              <Exercise key={exercise.exercise_name} editStatus={editStatus} exercise={exercise} loading={loading} handleRemove={handleRemoveExercise} handleSetAdded={handleLocalSetAdded} local={true}/>
+              <Exercise handleSetRemove={handleSetRemove} key={exercise.exercise_name} editStatus={editStatus} exercise={exercise} loading={loading} handleRemove={handleRemoveExercise} handleSetAdded={handleLocalSetAdded} local={true}/>
               ))
             }
         </div>
