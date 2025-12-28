@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { Plus } from 'lucide-react';
 
 const url = import.meta.env.VITE_API_URL
 
@@ -15,7 +16,8 @@ interface AddSetLogFormProps {
   exerciseLogId: number | null;
   setNum: number;
   local:boolean
-  onSetAdded: (newSet: SetLog) => void; 
+  onSetAdded: (newSet: SetLog) => void;
+  editOn:boolean; 
 }
 
 export const AddSetLogForm = (props: AddSetLogFormProps) =>{
@@ -89,7 +91,7 @@ export const AddSetLogForm = (props: AddSetLogFormProps) =>{
 
 
     return (
-        <div className='add_set_form'>
+        <div className={isActive ? "add_set_form_active":"add_set_form"}>
             { isActive ?
                 <>
                     <form onSubmit={handleAddSet}>
@@ -131,7 +133,10 @@ export const AddSetLogForm = (props: AddSetLogFormProps) =>{
                 {error && <p style={{color: 'red'}}>{error}</p>}
                 </>
                 :
-                <button onClick={changeActiveState}>Add Set</button>
+                <>            
+                    <h4 className='add-set-form-header-text'>Sets</h4>
+                    {props.editOn &&<button onClick={changeActiveState}>{<Plus/>}</button>}
+                </>
             }
         </div>
     )
