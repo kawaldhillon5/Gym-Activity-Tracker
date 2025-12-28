@@ -1,0 +1,62 @@
+#set-table{
+    background-color: var(--bg-highlight);
+    border: 2px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 5px;
+    border-spacing: 0;
+    font-size: larger;
+
+}
+
+.set-table-head{
+    padding: 5px;
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr;
+    margin-bottom: 5px;
+}
+
+.set-table-body-row{
+    padding: 10px;
+    margin-bottom: 5px;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    background-color: var(--bg-card);
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr;
+    align-items: center;
+}
+
+.set-table-reps-coloum{
+    border-radius: 10px 0px 0px 10px;
+}
+
+.set-table--coloum{
+    border-radius: 10px 0px 0px 10px;
+}
+
+
+
+.set-table-comment-div{
+    height: 0; 
+    overflow: hidden;
+    transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding-left: 12px;
+    grid-area: 2/1/3/4;
+
+}
+.set-table-comment-div.visible{
+    height: 40px; /* Slides down to this height */
+    margin-top: 1px;
+}
+
+.set-table-remove-button-active{}
+
+.set-table-remove-button{
+    /* background-color: var(--bg-card); */
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-full);
+}
+
+
+
+

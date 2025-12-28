@@ -3,6 +3,9 @@ import { AddSetLogForm } from "./AddSetLog";
 import { useEffect, useState } from "react";
 import { Modal } from "./ModalDiaglog";
 
+import "../css/SetTable.css"
+import { TableRow } from "./SetTableRow";
+
 interface SetLog {
   id: number | null;
   set_number: number;
@@ -66,30 +69,21 @@ export const Exercise = ({exercise, editStatus, loading, handleSetAdded, local, 
                     { removeLoading ? <Loader/> : <Trash2Icon/>}
                 </button>}
             </div>
-            <AddSetLogForm setNum = {exercise.set_logs.length + 1} exerciseLogId = {exercise.id} local={local} onSetAdded={(newSet) => handleSetAdded(newSet, exercise.id)} />              
+            <AddSetLogForm editOn={editStatus === "On"} setNum = {exercise.set_logs.length + 1} exerciseLogId = {exercise.id} local={local} onSetAdded={(newSet) => handleSetAdded(newSet, exercise.id)} />              
             {exercise.set_logs.length === 0 ? (
             <p>No sets logged for this exercise.</p>
             ) : (
-            <table id='set_table' style={{ width: '100%', marginTop: '10px' }}>
-                <thead>
-                <tr>
-                    <th >Set</th>
-                    <th >Weight (kg)</th>
-                    <th >Reps</th>
-                    <th >Comment</th>
-                </tr>
-                </thead>
-                <tbody>
+            <div id='set-table' >
+                <div className="set-table-head">
+                    <div >Reps</div>
+                    <div >Weight (kg)</div>
+                </div>
+                <div className="set-table-body">
                 {exercise.set_logs.map(set => (
-                    <tr key={set.id}>
-                    <td>{set.set_number}</td>
-                    <td>{set.weight_kg}</td>
-                    <td>{set.reps}</td>
-                    <td>{set.comment || 'N/A'}</td>
-                    </tr>
+                    <TableRow key={set.set_number} set={set} editStatus={editStatus}/>
                 ))}
-                </tbody>
-            </table>
+                </div>
+            </div>
             )}
         <Modal heading={`Delete ${exercise.exercise_name}?`} isOpen={modalState} onYes={handleModalYes} setIsOpen={setModalState} />
         </div>

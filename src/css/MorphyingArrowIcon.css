@@ -1,0 +1,34 @@
+.arrow-left,
+.arrow-right {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+}
+
+/* Arrow down mode  */
+.arrow-left.arrow-down-mode {
+    transform: translateX(0) translateY(0) rotate(0deg);
+}
+
+.arrow-right.arrow-down-mode {
+    transform: translateX(0) translateY(0) rotate(0deg);
+}
+
+/* Arrow up mode  */
+.arrow-left.arrow-up-mode{
+    transform: translateX(0) translateY(0) rotate(180deg);
+
+}
+
+.arrow-right.arrow-up-mode{
+    transform: translateX(0) translateY(0) rotate(180deg);
+}
+
+/* Minus mode - horizontal line */
+.arrow-left.minus-mode {
+    /* transform: translateX(12.5px) translateY(-12.5px) rotate(-24deg); */
+    transform: translateX(12.5px) translateY(-12.5px) rotate(-24deg);
+}
+
+.arrow-right.minus-mode {
+    transform: translateX(-12.5px) translateY(-12.5px) rotate(24deg);
+}

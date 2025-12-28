@@ -13,12 +13,14 @@
     grid-template-columns: 2.5fr 0.5fr;
     justify-items: start;
     align-items: center;
+    padding: 10px;
 }
 
 .exercise_div_header{
+    padding: 10px;
     display: grid;
     grid-template-rows: 1fr;
-    grid-template-columns: 2.5fr 0.5fr;
+    grid-template-columns: 3.5fr 0.5fr;
     justify-items: start;
     align-items: center;
 }
@@ -82,7 +84,7 @@
     justify-items: start;
 }
 
-.exercise-remove-btn{
+.exercise-remove-btn,.add_set_form>button{
     background-color: var(--bg-card);
     border-radius: var(--radius-lg);
     border: 1px solid var(--border-subtle);
@@ -90,12 +92,12 @@
     animation: remove-btn-ani cubic-bezier(0.175, 0.885, 0.32, 1.275) 600ms;
 }
 
-.workout_div_header>button, .exercise-remove-btn{
+.workout_div_header>button, .exercise-remove-btn, .add_set_form>button{
     transition: transform cubic-bezier(0.175, 0.885, 0.32, 1.275) 300ms;
 }
 
 
-.exercise-remove-btn:active, .workout_div_header>button:active{
+.exercise-remove-btn:active, .workout_div_header>button:active, .add_set_form>button:active{
     box-shadow: 0 0 30px rgba(173, 173, 173, 0.445);
     transform: scale(0.8) ;
 }
@@ -187,3 +189,12 @@
     background-color: rgba(0, 128, 0, 0.329);
     border: 1px solid green;
 }
+
+.add_set_form{
+    display: grid;
+    grid-template-columns: 3.5fr 0.5fr;
+    grid-template-rows: 1fr;
+    justify-items: start;
+    align-items: center;
+}
+
