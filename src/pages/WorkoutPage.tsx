@@ -407,7 +407,7 @@ export const WorkoutPage = () => {
           <div className='saved_exercises_div'>
           {
             workout.exercise_logs.map(exercise => (
-            <Exercise handleSetRemove={handleSetRemove} key={exercise.id} editStatus={editStatus} exercise={exercise} loading={loading} handleRemove={handleRemoveExercisesPerma} handleSetAdded={handleSetAdded} local={false}/>
+            <Exercise setError={setError} handleSetRemove={handleSetRemove} key={exercise.id} editStatus={editStatus} exercise={exercise} loading={loading} handleRemove={handleRemoveExercisesPerma} handleSetAdded={handleSetAdded} local={false}/>
           ))
           }  
           </div>
@@ -416,7 +416,7 @@ export const WorkoutPage = () => {
         <div className='unsaved_exercises_div'>
             {
               unsavedExercises.map(exercise => (
-              <Exercise handleSetRemove={handleSetRemove} key={exercise.exercise_name} editStatus={editStatus} exercise={exercise} loading={loading} handleRemove={handleRemoveExercise} handleSetAdded={handleLocalSetAdded} local={true}/>
+              <Exercise setError={setError} handleSetRemove={handleSetRemove} key={exercise.exercise_name} editStatus={editStatus} exercise={exercise} loading={loading} handleRemove={handleRemoveExercise} handleSetAdded={handleLocalSetAdded} local={true}/>
               ))
             }
         </div>

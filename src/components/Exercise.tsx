@@ -25,7 +25,7 @@ type EditButtonStatus = "On"|"Off"|"Saving"
 type RemoveButtonStatus = "Idle"|"Sucess"|"Error"
 
 
-export const Exercise = ({exercise, editStatus, loading, handleSetAdded, local, handleRemove, handleSetRemove}:{exercise:ExerciseLog ,loading:boolean, local:boolean ,editStatus: EditButtonStatus ,handleSetAdded: (newSet:SetLog, id:number)=>void, handleRemove: (name:string, id:number)=>Promise<boolean> | boolean, handleSetRemove:(index:null|number, exerciseId:number,local:boolean)=>Promise<boolean>}) =>{
+export const Exercise = ({exercise, editStatus, loading, handleSetAdded, local, handleRemove, handleSetRemove, setError}:{setError: (val:string|null) => void,exercise:ExerciseLog ,loading:boolean, local:boolean ,editStatus: EditButtonStatus ,handleSetAdded: (newSet:SetLog, id:number)=>void, handleRemove: (name:string, id:number)=>Promise<boolean> | boolean, handleSetRemove:(index:null|number, exerciseId:number,local:boolean)=>Promise<boolean>}) =>{
 
     const [modalState, setModalState] = useState<boolean>(false)
     const [removeLoading, setRemoveLoading] = useState<boolean>(false)
@@ -68,7 +68,7 @@ export const Exercise = ({exercise, editStatus, loading, handleSetAdded, local, 
                     { removeLoading ? <Loader/> : <Trash2Icon/>}
                 </button>}
             </div>
-            <AddSetLogForm editOn={editStatus === "On"} setNum = {exercise.set_logs.length + 1} exerciseLogId = {exercise.id} local={local} onSetAdded={(newSet) => handleSetAdded(newSet, exercise.id)} />              
+            <AddSetLogForm setError={setError} editOn={editStatus === "On"} setNum = {exercise.set_logs.length + 1} exerciseLogId = {exercise.id} local={local} onSetAdded={(newSet) => handleSetAdded(newSet, exercise.id)} />              
             {exercise.set_logs.length === 0 ? (
             <p>No sets logged for this exercise.</p>
             ) : (
