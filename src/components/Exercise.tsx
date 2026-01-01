@@ -25,7 +25,7 @@ type EditButtonStatus = "On"|"Off"|"Saving"
 type RemoveButtonStatus = "Idle"|"Sucess"|"Error"
 
 
-export const Exercise = ({exercise, editStatus, loading, handleSetAdded, local, handleRemove, handleSetRemove, setError}:{setError: (val:string|null) => void,exercise:ExerciseLog ,loading:boolean, local:boolean ,editStatus: EditButtonStatus ,handleSetAdded: (newSet:SetLog, id:number)=>void, handleRemove: (name:string, id:number)=>Promise<boolean> | boolean, handleSetRemove:(index:null|number, exerciseId:number,local:boolean)=>Promise<boolean>}) =>{
+export const Exercise = ({exercise, editStatus, loading, handleSetAdded, local, handleRemove, handleSetUpdate ,handleSetRemove, setError}:{handleSetUpdate: (index:null|number, exerciseId: number, local:boolean, newSet:SetLog)=>void,setError: (val:string|null) => void,exercise:ExerciseLog ,loading:boolean, local:boolean ,editStatus: EditButtonStatus ,handleSetAdded: (newSet:SetLog, id:number)=>void, handleRemove: (name:string, id:number)=>Promise<boolean> | boolean, handleSetRemove:(index:null|number, exerciseId:number,local:boolean)=>Promise<boolean>}) =>{
 
     const [modalState, setModalState] = useState<boolean>(false)
     const [removeLoading, setRemoveLoading] = useState<boolean>(false)
@@ -79,7 +79,7 @@ export const Exercise = ({exercise, editStatus, loading, handleSetAdded, local, 
                 </div>
                 <div className="set-table-body">
                 {exercise.set_logs.map((set, index) => (
-                    <TableRow exerciseId={exercise.id} local={local} handleSetRemove={handleSetRemove} key={index} index={index} set={set} editStatus={editStatus}/>
+                    <TableRow handleSetUpdate={handleSetUpdate} exerciseId={exercise.id} local={local} handleSetRemove={handleSetRemove} key={index} index={index} set={set} editStatus={editStatus}/>
                 ))}
                 </div>
             </div>

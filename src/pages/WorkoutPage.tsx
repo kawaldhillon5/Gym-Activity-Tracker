@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import '../css/workout_page.css'
 import { Exercise } from '../components/Exercise';
 import { AddExercise } from '../components/AddExercise';
-import { Loader,  Pencil, Save } from 'lucide-react';
+import { Loader,  Pencil, Save, Weight } from 'lucide-react';
 import { ExeciseNames } from '../assets/data/Exercises';
 
 const url = import.meta.env.VITE_API_URL
@@ -305,6 +305,72 @@ export const WorkoutPage = () => {
         }
       } 
     }
+
+  const handleSetUpdate =  async (index:null|number, exerciseId: number, local:boolean, newSet:SetLog)=>{
+    if(index === null) index = 0
+
+      if(local){
+        setUnsavedExercises(prevExercises =>{
+          const updatedExerciseLogs = prevExercises.map(exercise => {
+            
+            if (exercise.id !== exerciseId) {
+            return exercise;
+            }
+
+            return {
+            ...exercise, 
+            set_logs: exercise.set_logs.map((log, i)=> i !== index? log: newSet) 
+            };
+          });
+        
+          return updatedExerciseLogs;
+        })
+      }else {
+
+        setError("")
+        try{
+          const response = await fetch(`${url}/workouts/set-logs/${newSet.id}`,{
+            method:"PATCH",
+            headers:{
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({reps:newSet.reps,weight_kg:newSet.weight_kg,comment:newSet.comment})
+          });
+
+          if(!response.ok){
+            const err = await response.json();
+            throw new Error(err.detail || "Delete Set Failed")
+          }
+
+          setTimeout(()=>{setWorkout(prevWorkout => {
+            if (!prevWorkout) return null; 
+
+              const updatedExerciseLogs = prevWorkout.exercise_logs.map(exercise => {
+              
+              if (exercise.id !== exerciseId) {
+              return exercise;
+              }
+
+              return {
+              ...exercise, 
+              set_logs: exercise.set_logs.map(log=> log.id !== index? log: newSet) 
+              };
+            });
+
+            return {
+              ...prevWorkout,
+              exercise_logs: updatedExerciseLogs
+              };
+          })}, 300);
+
+        } catch (err: any){
+          console.log(err)
+          setError(err.message)
+        }
+      } 
+    }
+  
     
 
     const handleLocalSetAdded = (newSet: SetLog, id:number)=>{
@@ -407,7 +473,7 @@ export const WorkoutPage = () => {
           <div className='saved_exercises_div'>
           {
             workout.exercise_logs.map(exercise => (
-            <Exercise setError={setError} handleSetRemove={handleSetRemove} key={exercise.id} editStatus={editStatus} exercise={exercise} loading={loading} handleRemove={handleRemoveExercisesPerma} handleSetAdded={handleSetAdded} local={false}/>
+            <Exercise setError={setError} handleSetRemove={handleSetRemove} handleSetUpdate={handleSetUpdate} key={exercise.id} editStatus={editStatus} exercise={exercise} loading={loading} handleRemove={handleRemoveExercisesPerma} handleSetAdded={handleSetAdded} local={false}/>
           ))
           }  
           </div>
@@ -416,7 +482,7 @@ export const WorkoutPage = () => {
         <div className='unsaved_exercises_div'>
             {
               unsavedExercises.map(exercise => (
-              <Exercise setError={setError} handleSetRemove={handleSetRemove} key={exercise.exercise_name} editStatus={editStatus} exercise={exercise} loading={loading} handleRemove={handleRemoveExercise} handleSetAdded={handleLocalSetAdded} local={true}/>
+              <Exercise setError={setError}  handleSetRemove={handleSetRemove} handleSetUpdate={handleSetUpdate} key={exercise.exercise_name} editStatus={editStatus} exercise={exercise} loading={loading} handleRemove={handleRemoveExercise} handleSetAdded={handleLocalSetAdded} local={true}/>
               ))
             }
         </div>

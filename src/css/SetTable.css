@@ -37,7 +37,7 @@
 
 
 .set-table-comment-div{
-    height: 0; 
+    height: 0px; 
     overflow: hidden;
     transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     padding-left: 12px;
@@ -45,8 +45,8 @@
 
 }
 .set-table-comment-div.visible{
-    height: 40px; /* Slides down to this height */
-    margin-top: 1px;
+    height: 60px; /* Slides down to this height */
+    margin-top: 5px;
 }
 
 
@@ -59,6 +59,14 @@
 .set-table-remove-button.remove-btn-sucess{
     background-color: rgba(0, 128, 0, 0.322);
     border: 1px solid green;
+    
+}
+
+.set-table-reps-coloum,.set-table-weight-coloum{
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 

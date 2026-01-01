@@ -48,21 +48,6 @@
 
 
 
-.add_set_form>form{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.add_set_form>form>fieldset{
-    width: 270px;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 5px;
-}
-
 #set_table>thead>tr>th{
     text-align: center;
 }
@@ -133,10 +118,7 @@
 
 }
 
-/* .exercise-modal::backdrop{
-    transition: blur 300ms linear;
-    backdrop-filter: blur(3px);
-} */
+
 
 .exercise-modal::backdrop {
     background-color: rgba(0, 0, 0, 0.5);
@@ -180,12 +162,12 @@
     }
 }
 
-.remove-btn-error{
+.remove-btn-error,.add-set-btn.Error{
     background-color: rgba(255, 0, 0, 0.39);
     border: 1px solid red;
 }
 
-.remove-btn-sucess{
+.remove-btn-sucess,.add-set-btn.Sucess{
     background-color: rgba(0, 128, 0, 0.329);
     border: 1px solid green;
 }
