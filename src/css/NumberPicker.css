@@ -1,11 +1,10 @@
 .number-picker-main {
-    height: 60px; 
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     scroll-snap-type: y mandatory;
-    scroll-snap-stop: always;
+    /* scroll-snap-stop: always; */
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none; 
 }
@@ -14,15 +13,13 @@
     display: none; 
 }
 
-.number-picker-main > p {
-    height: 20px; 
-    line-height: 20px; 
+.num-item, .num-padding {
     margin: 0;
     padding: 0;
     scroll-snap-align: center;
     scale: 0.6;
     opacity: 0.5;
-    transition: all 100ms ease; 
+    transition: all 20ms ease; 
     flex-shrink: 0; 
     font-weight: bold;
     cursor: pointer;
@@ -39,10 +36,10 @@
     pointer-events: none;
 }
 
-.number-picker-main > .tilt-up{
+/* .number-picker-main > .tilt-up{
     transform: rotateX(60deg);
 }
 
 .number-picker-main > .tilt-down{
     transform: rotateX(60deg);
-}
+} */

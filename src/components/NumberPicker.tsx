@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import {  useEffect, useMemo, useRef, } from "react";
 import type { UIEvent } from "react";
 import '../css/NumberPicker.css';
 
@@ -12,83 +12,79 @@ interface Props {
     onChange: (name:string,val: number|string|null) => void; 
 }
 
+
 const ITEM_HEIGHT = 20; 
 
 export const NumberPicker = (props: Props) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    
 
-    const numbersArr = useMemo(() => {
-        let arr = [];
-        arr.push(null); 
-        
+    const pickerValues = useMemo(() => {
+        const arr: (number | null)[] = [null]; 
         for (let i = props.initial; i <= props.final; i += props.increment) {
-            arr.push(Math.round(i * 100) / 100); 
+            arr.push(i);
         }
-        
-        arr.push(null);
+        arr.push(null); 
         return arr;
     }, [props.initial, props.final, props.increment]);
 
-    const containerRef = useRef<HTMLDivElement>(null);
-    const [localMainNumber, setLocalMainNumber] = useState<number>(props.numbr);
 
     const handleScroll = (e: UIEvent<HTMLDivElement>) => {
-        if (!containerRef.current) return;
-        
         const scrollTop = e.currentTarget.scrollTop;
+        
+        const visualIndex = Math.round(scrollTop / ITEM_HEIGHT);
+        
 
-        const index = Math.round(scrollTop / ITEM_HEIGHT);
+        const selectedValue = pickerValues[visualIndex + 1];
 
-        const targetValue = numbersArr[index+1]; 
-
-        if (typeof targetValue === 'number' && targetValue !== localMainNumber) {
-            setLocalMainNumber(targetValue);
-            props.onChange(props.name,targetValue)
+        if (typeof selectedValue === 'number') {
+            if (selectedValue !== props.numbr) {
+               props.onChange(props.name, selectedValue);
+            }
         }
     };
 
-    const mainNumberIndex = useMemo(()=>{
-        return numbersArr.indexOf(localMainNumber)
-    },[localMainNumber, numbersArr])
-
-    // 4. Initial Scroll Position
     useEffect(() => {
         if (containerRef.current) {
-            const dataIndex = numbersArr.indexOf(props.numbr);
-            
-            if (dataIndex > -1) {
-                const scrollPos = (dataIndex - 1) * ITEM_HEIGHT;
-                
-                containerRef.current.scrollTo({
-                    top: scrollPos,
-                    behavior: 'instant' 
+
+            const targetIndex = pickerValues.indexOf(props.numbr);
+
+            if (targetIndex > 0) {
+
+                const scrollPos = (targetIndex - 1) * ITEM_HEIGHT;
+
+                requestAnimationFrame(() => {
+                    containerRef.current?.scrollTo({
+                        top: scrollPos,
+                        behavior: 'instant' 
+                    });
                 });
             }
         }
-    }, [props.numbr, numbersArr]); 
+    }, []); 
 
     return (
         <div 
             ref={containerRef}
             className="number-picker-main" 
             onScroll={handleScroll}
+            style={{ height: ITEM_HEIGHT * 3 }}
         >
-            {numbersArr.map((num, index) => {
-                const isSnapped = num === localMainNumber;
-                
-                if (num === null) {
-                    return <p key={`pad-${index}`} className="num-padding">0</p>;
+            {pickerValues.map((val, index) => {
+                if (val === null) {
+                    return <div key={`pad-${index}`} className="num-padding" style={{height: ITEM_HEIGHT}} />;
                 }
-
+                
+                const isSelected = val === props.numbr;
+                
                 return (
-                    <p 
-                        key={num} 
-                        className={`${isSnapped ? "num-snapped" : ""} ${mainNumberIndex < index ? "tilt-down": mainNumberIndex > index ?"tilt-up": ""}`}
-                        onClick={() => {
-
-                        }}
+                    <div 
+                        key={val} 
+                        className={`num-item ${isSelected ? 'num-snapped' : ''}`}
+                        style={{height: ITEM_HEIGHT, lineHeight: `${ITEM_HEIGHT}px`}}
                     >
-                        {num}
-                    </p>
+                        {val}
+                    </div>
                 );
             })}
         </div>
