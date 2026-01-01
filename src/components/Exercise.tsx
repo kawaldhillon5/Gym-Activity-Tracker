@@ -22,40 +22,37 @@ interface ExerciseLog {
 
 type EditButtonStatus = "On"|"Off"|"Saving"
 
-type RemoveButtonStatus = "Idle"|"Sucess"|"Error"
+type RemoveButtonStatus = "Idle"|"Sucess"|"Error"|"Loading"
 
 
 export const Exercise = ({exercise, editStatus, loading, handleSetAdded, local, handleRemove, handleSetUpdate ,handleSetRemove, setError}:{handleSetUpdate: (index:null|number, exerciseId: number, local:boolean, newSet:SetLog)=>void,setError: (val:string|null) => void,exercise:ExerciseLog ,loading:boolean, local:boolean ,editStatus: EditButtonStatus ,handleSetAdded: (newSet:SetLog, id:number)=>void, handleRemove: (name:string, id:number)=>Promise<boolean> | boolean, handleSetRemove:(index:null|number, exerciseId:number,local:boolean)=>Promise<boolean>}) =>{
 
     const [modalState, setModalState] = useState<boolean>(false)
-    const [removeLoading, setRemoveLoading] = useState<boolean>(false)
-    const [removeError, setRemoveError] = useState<RemoveButtonStatus>("Idle")
+    const [removeBtnState, setRemoveBtnState] = useState<RemoveButtonStatus>("Idle")
 
     const handleModalYes = async ()=>{
         setModalState(false)
-        if(!local) {setRemoveLoading(true)}
+        if(!local) {setRemoveBtnState("Loading")}
         setTimeout(async ()=>{
             const res = await handleRemove(exercise.exercise_name,exercise.id)
             if(res === true){                                                         
-                setRemoveLoading(false)
-                setRemoveError("Sucess")
+                setRemoveBtnState("Sucess")
             } else {
-                setRemoveLoading(false)
-                setRemoveError("Error")
+                setRemoveBtnState("Error")
             }
         },200)
     }
 
     useEffect(()=>{
         let timeoutId = undefined;
-        if(removeError){
+        if(removeBtnState === "Error" || removeBtnState === "Sucess"){
             timeoutId = setTimeout(() => {
-                setRemoveError("Idle")
+                setRemoveBtnState("Idle")
             }, 500);
         }
 
         return ()=> clearTimeout(timeoutId)
-    },[removeError])
+    },[removeBtnState])
 
     return(
         <div className={loading ? "exercise_component_loading set_item" : "exercise_component set_item"} key={exercise.id}>
@@ -63,9 +60,9 @@ export const Exercise = ({exercise, editStatus, loading, handleSetAdded, local, 
                 <h2>{exercise.exercise_name}</h2>
                 {editStatus === "On" && <button
                     onClick={()=>{setModalState(prev => !prev)}}
-                    className={`exercise-remove-btn ${removeError == "Error" && "remove-btn-error"} ${removeError == "Sucess" && "remove-btn-sucess"}`}
+                    className={`exercise-remove-btn ${removeBtnState == "Error" && "remove-btn-error"} ${removeBtnState == "Sucess" && "remove-btn-sucess"}`}
                 >
-                    { removeLoading ? <Loader/> : <Trash2Icon/>}
+                    { removeBtnState === "Loading" ? <Loader/> : <Trash2Icon/>}
                 </button>}
             </div>
             <AddSetLogForm setError={setError} editOn={editStatus === "On"} setNum = {exercise.set_logs.length + 1} exerciseLogId = {exercise.id} local={local} onSetAdded={(newSet) => handleSetAdded(newSet, exercise.id)} />              
