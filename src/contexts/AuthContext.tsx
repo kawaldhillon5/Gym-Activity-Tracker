@@ -2,17 +2,15 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const url = import.meta.env.VITE_API_URL
 
-// 1. Define a simple type for our User object
-// (This should match your `UserRead` schema in the backend)
+
 export interface User {
   id: number;
   user_name: string;
 }
 
-// 2. Define the "shape" of our context data
 interface AuthContextType {
   token: string | null;
-  user: User | null; // <-- NEW: We now store the user object
+  user: User | null; 
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
 }
