@@ -112,7 +112,7 @@ export const TableRow = ({set,editStatus, index, handleSetRemove, local, exercis
                 <div>
                     <button 
                         onClick={handleOnclick} 
-                        className={`set-table-remove-button ${removeBtnState == "Error" && "remove-btn-error"} ${removeBtnState === "Sucess" && "remove-btn-sucess"}`}>
+                        className={`set-table-remove-button ${(editStatus === "On" ) && "isMinus"} ${removeBtnState == "Error" && "remove-btn-error"} ${removeBtnState === "Sucess" && "remove-btn-sucess"}`}>
                         {removeBtnState === "Loading" ?<Loader/> :<MorpyhingArrow isArrow={editStatus === "Off" || editStatus==="Saving"?true:false} isExpanded={isExpanded}/>}
                     </button>
                 </div>

@@ -56,6 +56,10 @@
     border-radius: var(--radius-full);
 }
 
+.set-table-remove-button.isMinus{
+    border-color: red;
+}
+
 .set-table-remove-button.remove-btn-sucess{
     background-color: rgba(0, 128, 0, 0.322);
     border: 1px solid green;
