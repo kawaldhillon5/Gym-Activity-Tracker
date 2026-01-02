@@ -109,3 +109,12 @@ nav>a:hover, .user_link:hover{
     transition: opacity 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     transition-delay: 0.3s;
 }
+
+.nav-error-div{
+    position: relative;
+    top: 20px;
+    font-size: 0.8rem;
+    color: var(--error);
+    font-family: monospace;
+    width: 60%;
+}
