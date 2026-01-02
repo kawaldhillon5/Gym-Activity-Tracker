@@ -6,6 +6,7 @@ import { AnimatedCheckmark } from "./AnimatedCheckMark";
 import { HomeIcon, User2 } from "lucide-react";
 import { useOnClickOutside } from "../contexts/OnClickOutside";
 import MorphUser from "./MorphyingUserIcon";
+import { useError } from "../contexts/ErrorContext";
 
 type LogOutStatus = 'idle' | 'success';
 
@@ -13,6 +14,8 @@ type LogOutStatus = 'idle' | 'success';
 export const Navbar = () =>{
 
     const { user, logout } = useAuth();
+    const {error} = useError();
+
     const navigate = useNavigate();
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -50,6 +53,7 @@ export const Navbar = () =>{
         <nav ref={dropdownRef}>
             
             <Link className="home_link" to={'/home'}><HomeIcon /></Link>
+            {error && error.length > 0 && <div className="nav-error-div" style={{ color: 'var(--error)', marginTop: '16px', textAlign: 'center', fontSize: '0.9rem' }}>{error}</div>}
             <div
                 onClick={() => setIsOpen(prev => !prev)} 
                 className={`user_link ${isOpen ? "user_link_expanded":""}`}>

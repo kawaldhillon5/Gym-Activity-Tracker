@@ -20,8 +20,8 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           < Route element = {<AuthRequired />}>
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/workout/:workoutId" element={<WorkoutPage />} />
+              <Route path="/home" element={<HomePage />} />
+              <Route path="/workout/:workoutId" element={<WorkoutPage />} />
           </Route>
         </Routes>
       </div>

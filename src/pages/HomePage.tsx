@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import '../css/HomePage.css'
 import { CalendarDays } from 'lucide-react';
 import { LineWobble } from 'ldrs/react';
+import { useError } from '../contexts/ErrorContext';
 
 const url = import.meta.env.VITE_API_URL
 
@@ -31,7 +32,7 @@ type CheckInStatus = 'idle' | 'Loading';
 export const HomePage = () => {
   const { token } = useAuth();
   const [checkIns, setCheckIns] = useState<string[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const {setError} = useError();
   const navigate = useNavigate()
 
   const [CheckInStatus, setCheckInStatus] = useState<CheckInStatus>("idle")
@@ -41,6 +42,8 @@ export const HomePage = () => {
   const localDateString = (date: Date) => {
     const dateLocal  =  date.toLocaleDateString()
     const dateArray = dateLocal.split("/")
+    dateArray[0].length < 2 ? dateArray[0] = "0"+ dateArray[0] : dateArray[0]
+    dateArray[1].length < 2 ? dateArray[1] = "0"+ dateArray[1] : dateArray[1]
     return `${dateArray[2]}-${dateArray[0]}-${dateArray[1]}`
   }
 
@@ -66,6 +69,7 @@ export const HomePage = () => {
         setError("You must be logged in to View Workout.");
         return;
     }
+    console.log(dateString)
     if(checkIns.includes(dateString)) {
       try {
         setCheckInStatus("Loading")
@@ -84,7 +88,7 @@ export const HomePage = () => {
         const workout : WorkoutRead = await response.json()
         setCheckInStatus("idle")
         const lastDate = getPreviousCheckInDate();
-        navigate(`/workout/${workout.id}`,{state:{lastCheckInDate:lastDate, checkInDate: dateString}});
+        navigate(`/workout/${workout.id}`,{state:{lastCheckInDate:lastDate, checkInDate: dateString }});
 
       }catch (err: any){
         console.error(err)
@@ -132,7 +136,7 @@ export const HomePage = () => {
             },
             body: JSON.stringify({
                 check_in_id: newCheckIn.id,
-                name: "Today's Workout" // We can let the user rename this later
+                name: "Today's Workout"
             })
         });
 
@@ -186,8 +190,6 @@ export const HomePage = () => {
         const data: CheckIn[] = await response.json();
 
         const dates = data.map(checkin => checkin.check_in_date);
-        console.log("Fetched check-in dates:", dates);
-
         setCheckIns(dates);
 
       } catch (err: any) {
@@ -204,7 +206,9 @@ export const HomePage = () => {
     }
   }, [token]); 
 
- 
+  useEffect(()=>{
+    return ()=>{setError(null)}
+  },[])
   
   return (
     <div id='home_page'>
@@ -250,8 +254,6 @@ export const HomePage = () => {
         onClickDay={(value) =>{handleClickDate(value)}} 
         calendarType='iso8601' // Starts week on Monday
       />
-      
-      {error && <p className="error-msg">{error}</p>}
     </div>
   );
 };

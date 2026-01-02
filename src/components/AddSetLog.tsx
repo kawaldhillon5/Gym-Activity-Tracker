@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Loader, Plus } from 'lucide-react';
+import { useError } from '../contexts/ErrorContext';
 
 const url = import.meta.env.VITE_API_URL
 
@@ -18,7 +19,6 @@ interface AddSetLogFormProps {
   local:boolean
   onSetAdded: (newSet: SetLog) => void;
   editOn:boolean;
-  setError: (val: string|null) => void; 
 }
 
 type ButtonStatus = "Idle"|"Sucess"|"Error"|"Loading"
@@ -27,11 +27,11 @@ type ButtonStatus = "Idle"|"Sucess"|"Error"|"Loading"
 export const AddSetLogForm = (props: AddSetLogFormProps) =>{
 
     const [buttonState, setButtonState] = useState<ButtonStatus>("Idle")
-
+    const {setError} = useError()
     const {token} = useAuth()
 
     const handleAddSet = async () =>{
-        props.setError(null)
+        setError(null)
         setButtonState("Loading")
         if(props.local == false){
             try {
@@ -63,7 +63,7 @@ export const AddSetLogForm = (props: AddSetLogFormProps) =>{
 
             } catch (err: any) {
                 setButtonState("Error")
-                props.setError(err.message);
+                setError(err.message);
             }
         } else {
             const newSetLog: SetLog = {
@@ -78,6 +78,10 @@ export const AddSetLogForm = (props: AddSetLogFormProps) =>{
 
         }
     }
+
+    useEffect(()=>{
+        return ()=>{setError(null)}
+    },[])
 
     useEffect(()=>{
         let timeOutId = undefined

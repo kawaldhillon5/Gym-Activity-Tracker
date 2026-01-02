@@ -7,6 +7,7 @@ import { Exercise } from '../components/Exercise';
 import { AddExercise } from '../components/AddExercise';
 import { Loader,  Pencil, Save, Weight } from 'lucide-react';
 import { ExeciseNames } from '../assets/data/Exercises';
+import { useError } from '../contexts/ErrorContext';
 
 const url = import.meta.env.VITE_API_URL
 
@@ -50,7 +51,9 @@ export const WorkoutPage = () => {
   const [localExerciseLogCount, setLocalExerciseLogCount] = useState<number>(1)
   const [exerciseNamesForAddList, setExerciseNamesForAddList] =  useState<string[]>([])
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const {error, setError} = useError()
+
+  const selectedExeriseName = [...unsavedExercises.map(e => e.exercise_name)]
 
   const [editStatus, setEditStatus] = useState<EditButtonStatus>("Off")
 
@@ -445,7 +448,10 @@ export const WorkoutPage = () => {
     fetchWorkout();
   }, [token, workoutId]); 
 
-  const selectedExeriseName = [...unsavedExercises.map(e => e.exercise_name)]
+
+  useEffect(()=>{
+    return ()=>{setError(null)}
+  },[])
 
   if (loading) {
     return <div>Loading your workout...</div>;
@@ -472,8 +478,8 @@ export const WorkoutPage = () => {
           // First map: Loop over the Exercises
           <div className='saved_exercises_div'>
           {
-            workout.exercise_logs.map(exercise => (
-            <Exercise setError={setError} handleSetRemove={handleSetRemove} handleSetUpdate={handleSetUpdate} key={exercise.id} editStatus={editStatus} exercise={exercise} loading={loading} handleRemove={handleRemoveExercisesPerma} handleSetAdded={handleSetAdded} local={false}/>
+             workout.exercise_logs.map(exercise => (
+            <Exercise handleSetRemove={handleSetRemove} handleSetUpdate={handleSetUpdate} key={exercise.id} editStatus={editStatus} exercise={exercise} loading={loading} handleRemove={handleRemoveExercisesPerma} handleSetAdded={handleSetAdded} local={false}/>
           ))
           }  
           </div>
@@ -482,7 +488,7 @@ export const WorkoutPage = () => {
         <div className='unsaved_exercises_div'>
             {
               unsavedExercises.map(exercise => (
-              <Exercise setError={setError}  handleSetRemove={handleSetRemove} handleSetUpdate={handleSetUpdate} key={exercise.exercise_name} editStatus={editStatus} exercise={exercise} loading={loading} handleRemove={handleRemoveExercise} handleSetAdded={handleLocalSetAdded} local={true}/>
+              <Exercise handleSetRemove={handleSetRemove} handleSetUpdate={handleSetUpdate} key={exercise.exercise_name} editStatus={editStatus} exercise={exercise} loading={loading} handleRemove={handleRemoveExercise} handleSetAdded={handleLocalSetAdded} local={true}/>
               ))
             }
         </div>
