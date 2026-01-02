@@ -3,18 +3,16 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    padding: 24px;
+    padding: 20px;
     box-sizing: border-box;
     background-color: var(--bg-main);
     color: var(--text-primary);
-    overflow-y: auto;
 }
 
 /* === 1. HEADS UP DISPLAY === */
 .dashboard-header {
     margin-bottom: 32px;
-    margin-top: 20px;
-    text-align: left; /* Align left for pro look */
+    text-align: left; 
     width: 100%;
 }
 
@@ -35,44 +33,17 @@
     text-transform: uppercase;
 }
 
-/* === 2. ACTION CARD (HERO) === */
 .action-card {
     background-color: var(--bg-card);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-lg);
-    padding: 24px;
-    margin-bottom: 32px;
+    padding: 20px;
+    margin-bottom: 20px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     position: relative;
-    overflow: hidden;
-}
-
-.action-card.active {
-    border-color: var(--text-primary); /* Highlight active state */
-}
-
-.status-label {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.status-indicator {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: var(--text-secondary);
-}
-
-.action-card.active .status-indicator {
-    background-color: #10b981; /* Emerald Green */
-    box-shadow: 0 0 10px #10b981;
 }
 
 .checkin-btn {
