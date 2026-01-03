@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import '../css/workout_page.css'
 import { Exercise } from '../components/Exercise';
 import { AddExercise } from '../components/AddExercise';
-import { Loader,  Pencil, Save, Weight } from 'lucide-react';
+import { ClipboardCopy, Loader,  Pencil, Save, Weight } from 'lucide-react';
 import { ExeciseNames } from '../assets/data/Exercises';
 import { useError } from '../contexts/ErrorContext';
 
@@ -374,8 +374,6 @@ export const WorkoutPage = () => {
       } 
     }
   
-    
-
     const handleLocalSetAdded = (newSet: SetLog, id:number)=>{
       setUnsavedExercises(prevExercises=>{
 
@@ -393,6 +391,43 @@ export const WorkoutPage = () => {
         
         return updatedExerciseLogs;
         })
+    }
+
+    const handleCopyLastWorkout = async()=>{
+        if (!token) {
+          setLoading(false);
+          return;
+      }
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await fetch(`${url}/workouts/date/${location.state.lastCheckInDate}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.detail || "Failed to fetch last workout data.");
+        }
+
+        const data: Workout = await response.json();
+        if(data.exercise_logs.length){
+          setUnsavedExercises(data.exercise_logs);
+          setEditStatus("On")
+        } else {
+          setError("Last Workout Session is Empty")
+        }
+        
+        
+      } catch (err: any) {
+        setError(err.message);
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     }
 
     useEffect(()=>{
@@ -472,10 +507,13 @@ export const WorkoutPage = () => {
           <h3>Exercises</h3>
           {editStatus === "On" && <AddExercise selectedExerciseNames={selectedExeriseName} exerciseNames={exerciseNamesForAddList} onSelected={handelAddExercise} onUnSelected={handleRemoveExercise}/> }
         </div>
-        {workout.exercise_logs.length === 0 ? (
-          <p>You haven't added any exercises to this workout yet.</p>
+        {workout.exercise_logs.length === 0  ? (
+        unsavedExercises.length === 0 &&<>
+            <h3 className='no-exercises-p'>No Exercises Yet!</h3>
+            <button onClick={handleCopyLastWorkout} className='copy-last-workout-btn'><ClipboardCopy/> Copy Last Workout</button>
+          </>
+          
         ) : (
-          // First map: Loop over the Exercises
           <div className='saved_exercises_div'>
           {
              workout.exercise_logs.map(exercise => (
@@ -493,7 +531,6 @@ export const WorkoutPage = () => {
             }
         </div>
       </div>
-      {error && <div style={{ color: 'red' }}>Error: {error}</div>}
     </div>
   );
 };
