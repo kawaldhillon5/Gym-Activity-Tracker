@@ -40,11 +40,6 @@ export const HomePage = () => {
   
 
   const localDateString = (date: Date) => {
-    // const dateLocal  =  date.toLocaleDateString()
-    // const dateArray = dateLocal.split("/")
-    // dateArray[0].length < 2 ? dateArray[0] = "0"+ dateArray[0] : dateArray[0]
-    // dateArray[1].length < 2 ? dateArray[1] = "0"+ dateArray[1] : dateArray[1]
-    // return `${dateArray[2]}-${dateArray[0]}-${dateArray[1]}`
     const year = String(date.getFullYear());
     const month = String(date.getMonth() + 1).padStart(2, '0'); 
     const day = String(date.getDate()).padStart(2, '0');
@@ -140,7 +135,7 @@ export const HomePage = () => {
             },
             body: JSON.stringify({
                 check_in_id: newCheckIn.id,
-                name: "Today's Workout"
+                name: displayDate
             })
         });
 
