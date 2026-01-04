@@ -7,7 +7,6 @@
 
 /* Mobile-First Layout */
 .landing-container {
-  height: 100vh; /* Full screen */
   width: 100%;
   font-family: "Roboto";
   padding: 24px;
@@ -39,7 +38,7 @@
 }
 
 .hero-title {
-  font-size: 4rem; /* Massive text */
+  font-size: 3rem; /* Massive text */
   line-height: 0.95; /* Taut leading */
   font-weight: 800;
   text-transform: uppercase;
@@ -59,6 +58,7 @@
 
 /* Action Zone */
 .action-zone {
+  margin-top: 40px;
   display: flex;
   flex-direction: column;
   gap: 16px; /* Space between buttons */
