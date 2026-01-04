@@ -396,10 +396,17 @@ export const WorkoutPage = () => {
     }
 
     const handleCopyLastWorkout = async()=>{
-        if (!token) {
-          setLoading(false);
-          return;
+      if (!token) {
+        setLoading(false);
+        return;
       }
+
+      if(location.state.lastCheckInDate === null){
+        setLoading(false);
+        setError("No Prior Workout Sessions found")
+        return;
+      }
+
       try {
         setLoading(true);
         setError(null);
