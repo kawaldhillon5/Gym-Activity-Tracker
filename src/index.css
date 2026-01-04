@@ -41,8 +41,9 @@ a:hover {
 
 html,body {
   padding: 0%;
-  margin: 0%;
   height: 100%;
+  max-width: 600px;
+  margin: auto;
 }
 
 body {
