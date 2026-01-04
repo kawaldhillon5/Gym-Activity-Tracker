@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import '../css/workout_page.css'
 import { Exercise } from '../components/Exercise';
 import { AddExercise } from '../components/AddExercise';
-import { ClipboardCopy, Loader,  Pencil, Save, Weight } from 'lucide-react';
+import { ClipboardCopy, Loader,  Pencil, Save } from 'lucide-react';
 import { ExeciseNames } from '../assets/data/Exercises';
 import { useError } from '../contexts/ErrorContext';
 
@@ -98,6 +98,7 @@ export const WorkoutPage = () => {
 }
 
   const handleRemoveExercisesPerma = async (name:string, id:number)=>{
+    name = name ? name : name
     setError("")
     try{
       const response = await fetch(`${url}/workouts/exercise-logs/${id}`,{
@@ -210,6 +211,7 @@ export const WorkoutPage = () => {
   }
 
   const handleRemoveExercise = (exerciseName:string ,id:number) =>{
+    id = id ? id:id
     setUnsavedExercises(prevLogs => prevLogs.filter(exercise => exercise.exercise_name !== exerciseName));
     return true
   }
