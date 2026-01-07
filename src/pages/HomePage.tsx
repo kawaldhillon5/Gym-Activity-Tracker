@@ -119,6 +119,8 @@ export const HomePage = () => {
           "Authorization": `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
+        body: JSON.stringify({timezone: Intl.DateTimeFormat().resolvedOptions().timeZone})
+        
       });
       if(!response.ok){
         const err = await response.json()
