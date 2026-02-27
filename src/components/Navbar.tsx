@@ -84,7 +84,7 @@ const UserLink = function({user, handleLogout, logOutstatus, isExpanded}:{user: 
                 style={{ marginTop: '10px', boxShadow : "0 0 20px white" }}
                 onClick={handleLogout}>
                     {logOutstatus === 'idle' && "Log Out"}
-                    {logOutstatus === 'success' && <AnimatedCheckmark height={60} width={60} />}
+                    {logOutstatus === 'success' && <AnimatedCheckmark height={58.5} width={60} />}
             </button>
         </div>
     )
